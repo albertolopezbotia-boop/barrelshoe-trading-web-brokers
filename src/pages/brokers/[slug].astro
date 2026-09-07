@@ -80,13 +80,19 @@ const ld = [
     <Breadcrumbs crumbs={crumbs} />
 
     <header class="broker-head">
-      <img src={d.logo} alt={`Logo de ${d.name}`} width="120" height="48" />
-      <h1>{d.name}: análisis, spreads y opiniones</h1>
-      <RatingStars value={d.rating} showNumber />
-      <p class="bottom-line">{d.bottomLine}</p>
-      <p class="broker-updated">Datos revisados el {dateFmt.format(d.lastUpdated)}</p>
-      <AffiliateButton href={d.affiliateUrl} broker={d.name} />
-      <Disclosure variant="inline" />
+      <div class="broker-head__main">
+        <img src={d.logo} alt={`Logo de ${d.name}`} width="120" height="48" class="broker-head__logo" />
+        <h1>{d.name}: análisis, spreads y opiniones</h1>
+        <div class="broker-head__rating">
+          <RatingStars value={d.rating} showNumber />
+        </div>
+        <p class="bottom-line">{d.bottomLine}</p>
+        <p class="broker-updated">Datos revisados el {dateFmt.format(d.lastUpdated)}</p>
+      </div>
+      <div class="broker-head__cta">
+        <AffiliateButton href={d.affiliateUrl} broker={d.name} />
+        <Disclosure variant="inline" />
+      </div>
     </header>
 
     <section class="review-block">
@@ -98,24 +104,17 @@ const ld = [
 
     <section class="review-block rating-breakdown">
       <h2>Desglose de la valoración</h2>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">Área</th>
-            <th scope="col">Nota</th>
-            <th scope="col">Valoración</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ratingRows.map((row) => (
-            <tr>
-              <th scope="row">{row.label}</th>
-              <td>{scoreFmt.format(row.value)} / 5</td>
-              <td><RatingStars value={row.value} /></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ul class="score-grid">
+        {ratingRows.map((row) => (
+          <li>
+            <span class="score-grid__label">{row.label}</span>
+            <span class="score-grid__bar" aria-hidden="true">
+              <span class="score-grid__fill" style={`width:${(row.value / 5) * 100}%`}></span>
+            </span>
+            <span class="score-grid__value">{scoreFmt.format(row.value)}<small> / 5</small></span>
+          </li>
+        ))}
+      </ul>
     </section>
 
     <section class="review-body">
@@ -145,55 +144,84 @@ const ld = [
   .broker-review {
     display: flex;
     flex-direction: column;
-    gap: var(--space-8);
+    gap: var(--space-12);
     padding-block: var(--space-8);
   }
   .broker-head {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-4);
+    display: grid;
+    gap: var(--space-6);
+    align-items: start;
+    padding: var(--space-8);
+    background: linear-gradient(180deg, var(--color-primary-tint), var(--color-surface-raised) 60%);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
   }
-  .broker-head h1 {
-    margin: 0;
-  }
+  .broker-head__main { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  .broker-head__logo { height: 40px; width: auto; object-fit: contain; object-position: left center; }
+  .broker-head h1 { margin: 0; }
+  .broker-head__rating { font-size: var(--font-size-lg); }
   .broker-head .bottom-line {
     margin: 0;
-    max-width: 65ch;
-    color: var(--color-text-muted);
+    max-width: 60ch;
+    color: var(--color-text);
+    font-size: var(--font-size-lg);
   }
   .broker-head .broker-updated {
     margin: 0;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     color: var(--color-text-muted);
   }
+  .broker-head__cta { display: flex; flex-direction: column; gap: var(--space-2); }
+  @media (min-width: 780px) {
+    .broker-head { grid-template-columns: 1fr auto; }
+    .broker-head__cta { align-items: flex-end; text-align: right; }
+  }
+
   .review-block {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
   }
-  .review-block h2 {
+  .review-block h2 { margin: 0; }
+
+  .score-grid {
+    list-style: none;
     margin: 0;
+    padding: var(--space-4) var(--space-6);
+    display: grid;
+    gap: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-raised);
   }
-  .rating-breakdown table {
-    width: 100%;
-    border-collapse: collapse;
+  .score-grid li {
+    display: grid;
+    grid-template-columns: 12rem 1fr auto;
+    align-items: center;
+    gap: var(--space-4);
     font-size: var(--font-size-sm);
   }
-  .rating-breakdown th,
-  .rating-breakdown td {
-    text-align: left;
-    padding: var(--space-2) var(--space-3);
-    border-bottom: 1px solid var(--color-border);
-    vertical-align: middle;
+  .score-grid__label { color: var(--color-text-muted); }
+  .score-grid__bar {
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    overflow: hidden;
   }
-  .rating-breakdown thead th {
-    color: var(--color-text-muted);
+  .score-grid__fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--color-primary), #4f8bff);
   }
-  .review-body :global(h2) {
-    margin-top: var(--space-6);
+  .score-grid__value { font-weight: 800; color: var(--color-ink); white-space: nowrap; }
+  .score-grid__value small { color: var(--color-text-muted); font-weight: 600; }
+  @media (max-width: 560px) {
+    .score-grid li { grid-template-columns: 1fr auto; }
+    .score-grid__bar { grid-column: 1 / -1; order: 3; }
   }
-  .related h2 {
-    margin: 0 0 var(--space-4);
-  }
+
+  .review-body :global(h2) { margin-top: var(--space-8); }
+  .review-body :global(p) { margin-top: var(--space-3); }
+  .related h2 { margin: 0 0 var(--space-4); }
 </style>

@@ -5,7 +5,6 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ComparisonTable from '../../components/ComparisonTable.astro';
 import CategoryRanking from '../../components/CategoryRanking.astro';
 import Faq from '../../components/Faq.astro';
-import Disclosure from '../../components/Disclosure.astro';
 import { SITE } from '../../data/site';
 import { CATEGORIES } from '../../data/categories';
 import { filterByCategory, sortByRating, type BrokerEntry } from '../../lib/brokers';
@@ -49,12 +48,19 @@ const isEmpty = matched.length === 0;
   canonicalPath={`/mejores-brokers/${category.slug}/`}
   jsonLd={ld}
 >
-  <div class="container category-page">
-    <Breadcrumbs crumbs={crumbs} />
-    <h1>{category.title}</h1>
-    <p class="intro">{category.intro}</p>
-    <Disclosure />
+  <div class="cat-hero">
+    <div class="container">
+      <Breadcrumbs crumbs={crumbs} />
+      <h1>{category.title}</h1>
+      <p class="intro">{category.intro}</p>
+      <p class="cat-disc">
+        Contenido con enlaces de afiliado — no cambia nuestras valoraciones.
+        <a href="/aviso-legal/">Cómo ganamos dinero</a>.
+      </p>
+    </div>
+  </div>
 
+  <div class="container category-page">
     {
       isEmpty && (
         <p class="empty-state">
@@ -64,44 +70,56 @@ const isEmpty = matched.length === 0;
       )
     }
 
-    <h2>Comparativa</h2>
-    <ComparisonTable
-      entries={matched}
-      showRank={false}
-      caption={`Brokers de la categoría ${category.shortTitle}`}
-    />
+    <section class="cat-block">
+      <h2>Comparativa</h2>
+      <ComparisonTable
+        entries={matched}
+        showRank={false}
+        caption={`Brokers de la categoría ${category.shortTitle}`}
+      />
+    </section>
 
-    <h2>Ranking</h2>
-    <CategoryRanking entries={matched} />
+    <section class="cat-block">
+      <h2>Ranking</h2>
+      <CategoryRanking entries={matched} />
+    </section>
 
     <Faq items={category.faq} />
   </div>
 </Layout>
 
 <style>
-  .category-page {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-    padding-block: var(--space-8);
+  .cat-hero {
+    background: linear-gradient(180deg, var(--color-primary-tint), var(--color-bg) 80%);
+    border-bottom: 1px solid var(--color-border);
+    padding-block: var(--space-6) var(--space-8);
   }
-  .category-page h1 {
-    margin: 0;
-  }
-  .category-page h2 {
-    margin: var(--space-4) 0 0;
-  }
+  .cat-hero h1 { margin: var(--space-3) 0 var(--space-3); }
   .intro {
     margin: 0;
     max-width: 65ch;
     color: var(--color-text-muted);
+    font-size: var(--font-size-lg);
   }
+  .cat-disc {
+    margin: var(--space-4) 0 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+  .category-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    padding-block: var(--space-12);
+  }
+  .cat-block { display: flex; flex-direction: column; gap: var(--space-4); }
+  .cat-block h2 { margin: 0; }
   .empty-state {
     margin: 0;
     padding: var(--space-4);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    background: var(--color-surface);
+    background: var(--color-surface-raised);
     color: var(--color-text-muted);
     max-width: 65ch;
   }

@@ -6,10 +6,16 @@ const { variant = 'banner' } = Astro.props;
 <p class:list={['disclosure', variant]}>{SITE.affiliateDisclosure}</p>
 <style>
   .disclosure { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+  .disclosure.inline {
+    font-size: var(--font-size-xs);
+    line-height: var(--line-base);
+    max-width: 70ch;
+  }
   .disclosure.banner {
-    background: var(--color-surface);
+    background: var(--color-surface-raised);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     padding: var(--space-3) var(--space-4);
+    line-height: var(--line-base);
   }
 </style>

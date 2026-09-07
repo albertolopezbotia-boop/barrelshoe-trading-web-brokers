@@ -1,7 +1,7 @@
 ---
 import type { BrokerEntry } from '../lib/brokers';
 import { toRow, sortRows } from '../lib/table';
-import { money, pips } from '../lib/format';
+import { money } from '../lib/format';
 import AffiliateButton from './AffiliateButton.astro';
 
 interface Props {
@@ -20,6 +20,17 @@ const ratingFmt = new Intl.NumberFormat('es-ES', {
 
 const rows = sortRows(entries.map(toRow), 'rank', 'asc');
 
+const monogram = (name: string) =>
+  name
+    .replace(/[^\p{L} ]/gu, '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toUpperCase())
+    .join('');
+
+const starString = (value: number) => '★'.repeat(Math.round(value));
+
 const platformOptions = [...new Set(rows.flatMap((r) => r.platforms))].sort((a, b) =>
   a.localeCompare(b, 'es'),
 );
@@ -32,9 +43,6 @@ const columns: { key: string; label: string; sort?: string }[] = [
   { key: 'name', label: 'Broker' },
   { key: 'rating', label: 'Valoración', sort: 'rating' },
   { key: 'minDeposit', label: 'Depósito mínimo', sort: 'minDeposit' },
-  { key: 'spread', label: 'Spread EUR/USD', sort: 'spread' },
-  { key: 'platforms', label: 'Plataformas' },
-  { key: 'regulators', label: 'Reguladores' },
   { key: 'cta', label: 'Cuenta' },
 ];
 ---
@@ -72,7 +80,7 @@ const columns: { key: string; label: string; sort?: string }[] = [
         <tr>
           {
             columns.map((c) => (
-              <th scope="col">
+              <th scope="col" class={`th-${c.key}`}>
                 {c.sort ? (
                   <button type="button" data-sort={c.sort}>
                     {c.label}
@@ -89,6 +97,7 @@ const columns: { key: string; label: string; sort?: string }[] = [
         {
           rows.map((r, i) => (
             <tr
+              class={showRank && r.rank === 1 ? 'is-top' : undefined}
               data-slug={r.slug}
               data-rating={r.rating}
               data-rank={r.rank}
@@ -97,16 +106,28 @@ const columns: { key: string; label: string; sort?: string }[] = [
               data-platforms={r.platforms.join('|')}
               data-regulators={r.regulators.join('|')}
             >
-              <td data-label="#">{showRank ? r.rank : i + 1}</td>
-              <td data-label="Broker">
-                <a href={r.href}>{r.name}</a>
+              <td data-label="#" class="cell-rank">
+                <span class="rank-badge">{showRank ? r.rank : i + 1}</span>
               </td>
-              <td data-label="Valoración">{ratingFmt.format(r.rating)}</td>
-              <td data-label="Depósito mínimo">{money({ amount: r.minDeposit, currency: 'USD' })}</td>
-              <td data-label="Spread EUR/USD">{pips(r.spread)}</td>
-              <td data-label="Plataformas">{r.platforms.join(', ')}</td>
-              <td data-label="Reguladores">{r.regulators.join(', ')}</td>
-              <td data-label="Cuenta">
+              <td data-label="Broker" class="cell-broker">
+                <a href={r.href} class="broker-id">
+                  <span class="broker-monogram" aria-hidden="true">{monogram(r.name)}</span>
+                  <span class="broker-text">
+                    <span class="broker-name">{r.name}</span>
+                    <span class="broker-meta">
+                      {r.platforms.join(' · ')} &nbsp;|&nbsp; {r.regulators.slice(0, 3).join(' · ')}
+                    </span>
+                  </span>
+                </a>
+              </td>
+              <td data-label="Valoración" class="cell-rating">
+                <span class="score-pill">{ratingFmt.format(r.rating)}</span>
+                <span class="mini-stars" aria-hidden="true">{starString(r.rating)}</span>
+              </td>
+              <td data-label="Depósito mínimo" class="cell-deposit">
+                {money({ amount: r.minDeposit, currency: 'USD' })}
+              </td>
+              <td data-label="Cuenta" class="cell-cta">
                 <AffiliateButton
                   href={r.affiliateUrl}
                   broker={r.name}
@@ -201,23 +222,31 @@ const columns: { key: string; label: string; sort?: string }[] = [
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
     color: var(--color-text-muted);
   }
   .comparison__filters select {
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    background: var(--color-bg);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-raised);
     color: var(--color-text);
     font: inherit;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
   }
   .comparison__scroll {
     overflow-x: auto;
   }
+
   table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0 var(--space-2);
     font-size: var(--font-size-sm);
   }
   caption {
@@ -226,49 +255,135 @@ const columns: { key: string; label: string; sort?: string }[] = [
     color: var(--color-text-muted);
     padding-bottom: var(--space-2);
   }
-  th,
-  td {
+
+  thead th {
     text-align: left;
-    padding: var(--space-2) var(--space-3);
-    border-bottom: 1px solid var(--color-border);
-    vertical-align: middle;
-  }
-  th {
+    padding: 0 var(--space-4) var(--space-1);
     color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     white-space: nowrap;
   }
-  th button {
+  .th-rank { width: 3rem; }
+  .th-rating { width: 8.5rem; }
+  .th-minDeposit { width: 9rem; }
+  .th-cta { width: 10rem; }
+  thead button {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: 3px;
     background: none;
     border: 0;
     padding: 0;
     font: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
     color: inherit;
     cursor: pointer;
   }
-  th button::after {
-    content: "";
-    opacity: 0.4;
+  thead button::after { content: "\2195"; opacity: 0.35; }
+  thead button[aria-sort="ascending"]::after { content: "\2191"; opacity: 1; }
+  thead button[aria-sort="descending"]::after { content: "\2193"; opacity: 1; }
+  thead button[data-active="true"] { color: var(--color-ink); }
+
+  tbody tr {
+    background: var(--color-surface-raised);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.15s ease;
   }
-  th button[aria-sort="ascending"]::after {
-    content: "\2191";
-    opacity: 1;
+  tbody tr:hover { box-shadow: var(--shadow-card-hover); }
+  tbody tr.is-top { box-shadow: var(--shadow-feature); }
+
+  tbody td {
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
   }
-  th button[aria-sort="descending"]::after {
-    content: "\2193";
-    opacity: 1;
+  tbody td:first-child {
+    border-left: 1px solid var(--color-border);
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
   }
-  th button[data-active="true"] {
-    color: var(--color-text);
+  tbody td:last-child {
+    border-right: 1px solid var(--color-border);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
   }
-  tbody tr:hover {
+  tbody tr.is-top td { border-color: transparent; }
+
+  .rank-badge {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
     background: var(--color-surface);
+    color: var(--color-text-muted);
+    font-weight: 800;
+    font-size: var(--font-size-xs);
+  }
+  tr.is-top .rank-badge { background: var(--color-primary); color: var(--color-text-inverse); }
+
+  .broker-id {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    color: inherit;
+  }
+  .broker-id:hover { text-decoration: none; }
+  .broker-id:hover .broker-name { text-decoration: underline; }
+  .broker-monogram {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+    background: var(--color-ink);
+    color: var(--color-text-inverse);
+    font-weight: 800;
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.02em;
+  }
+  .broker-text { min-width: 0; }
+  .broker-name {
+    display: block;
+    font-weight: 700;
+    font-size: var(--font-size-base);
+    color: var(--color-ink);
+  }
+  .broker-meta {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
+  .cell-rating {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    white-space: nowrap;
+  }
+  .score-pill {
+    font-weight: 800;
+    font-size: var(--font-size-sm);
+    color: var(--color-ink);
+    background: var(--color-rating-bg);
+    border: 1px solid var(--color-rating-border);
+    border-radius: var(--radius-md);
+    padding: 2px 8px;
+  }
+  .mini-stars { color: var(--color-rating); font-size: var(--font-size-xs); letter-spacing: 1px; }
+
+  .cell-deposit { font-weight: 700; color: var(--color-ink); white-space: nowrap; }
+
   @media (max-width: 720px) {
+    table { border-spacing: 0; }
     thead {
       position: absolute;
       width: 1px;
@@ -285,29 +400,37 @@ const columns: { key: string; label: string; sort?: string }[] = [
       display: block;
       width: 100%;
     }
-    tbody tr[hidden] {
-      display: none;
-    }
+    tbody tr[hidden] { display: none; }
     tbody tr {
       border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-lg);
       margin-bottom: var(--space-4);
-      padding: var(--space-2);
+      padding: var(--space-4);
     }
-    td {
-      border-bottom: 1px solid var(--color-border);
+    tbody td {
+      border: 0;
+      border-radius: 0;
       padding: var(--space-2) 0;
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: var(--space-4);
     }
-    td:last-child {
-      border-bottom: 0;
-    }
-    td::before {
+    tbody td:first-child,
+    tbody td:last-child { border-radius: 0; }
+    tbody td::before {
       content: attr(data-label);
+      font-size: var(--font-size-xs);
       font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
       color: var(--color-text-muted);
     }
+    .cell-broker::before,
+    .cell-cta::before { display: none; }
+    .cell-broker { padding-top: 0; }
+    .broker-meta { white-space: normal; }
+    .cell-cta { padding-bottom: 0; }
+    .cell-cta :global(.aff-btn) { width: 100%; }
   }
 </style>

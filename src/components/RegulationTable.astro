@@ -4,28 +4,43 @@ interface Props {
   regulators: BrokerData['regulators'];
 }
 const { regulators } = Astro.props;
+const statusClass: Record<string, string> = {
+  activa: 'is-activa',
+  limitada: 'is-limitada',
+  retirada: 'is-retirada',
+};
 ---
-<table class="regulation-table">
-  <thead>
-    <tr>
-      <th scope="col">Autoridad</th>
-      <th scope="col">País</th>
-      <th scope="col">Nº de licencia</th>
-      <th scope="col">Estado</th>
-    </tr>
-  </thead>
-  <tbody>
-    {regulators.map((r) => (
+<div class="regulation-card">
+  <table class="regulation-table">
+    <thead>
       <tr>
-        <td>{r.authority}</td>
-        <td>{r.country}</td>
-        <td>{r.licenseNumber}</td>
-        <td>{r.status}</td>
+        <th scope="col">Autoridad</th>
+        <th scope="col">País</th>
+        <th scope="col">Nº de licencia</th>
+        <th scope="col">Estado</th>
       </tr>
-    ))}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {regulators.map((r) => (
+        <tr>
+          <td class="authority">{r.authority}</td>
+          <td>{r.country}</td>
+          <td>{r.licenseNumber}</td>
+          <td>
+            <span class:list={['status', statusClass[r.status]]}>{r.status}</span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
 <style>
+  .regulation-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-raised);
+    overflow: hidden;
+  }
   .regulation-table {
     width: 100%;
     border-collapse: collapse;
@@ -33,9 +48,40 @@ const { regulators } = Astro.props;
   }
   th, td {
     text-align: left;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-3) var(--space-4);
     border-bottom: 1px solid var(--color-border);
   }
-  th { color: var(--color-text-muted); }
-  td:last-child { text-transform: capitalize; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .authority { font-weight: 700; color: var(--color-ink); }
+  .status {
+    display: inline-block;
+    text-transform: capitalize;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+  }
+  .status.is-activa {
+    color: var(--color-positive);
+    background: var(--color-positive-bg);
+    border-color: var(--color-positive-border);
+  }
+  .status.is-limitada {
+    color: #8a5a00;
+    background: var(--color-warning-bg);
+    border-color: var(--color-warning-border);
+  }
+  .status.is-retirada {
+    color: var(--color-danger);
+    background: var(--color-danger-bg);
+    border-color: var(--color-danger-border);
+  }
 </style>

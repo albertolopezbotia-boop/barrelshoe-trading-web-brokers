@@ -21,7 +21,7 @@ const highlights = [
 const topPros = data.pros.slice(0, 2);
 ---
 
-<article class="broker-card">
+<article class:list={['broker-card', { 'is-first': position === 1 }]}>
   {position && <span class="broker-card__badge" aria-label={`Puesto ${position}`}>#{position}</span>}
   <div class="broker-card__head">
     <img
@@ -55,7 +55,7 @@ const topPros = data.pros.slice(0, 2);
 
   <div class="broker-card__actions">
     <AffiliateButton href={data.affiliateUrl} broker={data.name} />
-    <a class="broker-card__review" href={reviewHref}>Leer análisis</a>
+    <a class="broker-card__review" href={reviewHref}>Leer análisis ›</a>
   </div>
 </article>
 
@@ -66,22 +66,29 @@ const topPros = data.pros.slice(0, 2);
     flex-direction: column;
     gap: var(--space-4);
     padding: var(--space-6);
-    background: var(--color-bg);
+    background: var(--color-surface-raised);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
+    transition: box-shadow 0.15s ease;
   }
+  .broker-card:hover { box-shadow: var(--shadow-card-hover); }
+  .broker-card.is-first { box-shadow: var(--shadow-feature); border-color: transparent; }
+
   .broker-card__badge {
     position: absolute;
     top: calc(-1 * var(--space-3));
     left: var(--space-6);
     padding: var(--space-1) var(--space-3);
-    font-size: var(--font-size-sm);
-    font-weight: 700;
-    color: #fff;
-    background: var(--color-primary);
-    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--color-text-inverse);
+    background: var(--color-text-muted);
+    border-radius: var(--radius-pill);
   }
+  .broker-card.is-first .broker-card__badge { background: var(--color-primary); }
+
   .broker-card__head {
     display: flex;
     flex-direction: column;
@@ -97,36 +104,51 @@ const topPros = data.pros.slice(0, 2);
     margin: 0;
     font-size: var(--font-size-lg);
   }
+  .broker-card__name a { color: var(--color-ink); }
+
   .broker-card__highlights {
     display: grid;
-    gap: var(--space-2);
+    gap: 0;
     margin: 0;
+    border-top: 1px solid var(--color-border);
   }
   .broker-card__highlight {
     display: flex;
     justify-content: space-between;
     gap: var(--space-4);
     font-size: var(--font-size-sm);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-border);
   }
-  .broker-card__highlight dt {
-    color: var(--color-text-muted);
-  }
+  .broker-card__highlight dt { color: var(--color-text-muted); }
   .broker-card__highlight dd {
     margin: 0;
     font-weight: 700;
     text-align: right;
+    color: var(--color-ink);
   }
+
   .broker-card__pros {
     margin: 0;
-    padding-left: var(--space-6);
+    padding: 0;
+    list-style: none;
     display: grid;
-    gap: var(--space-1);
+    gap: var(--space-2);
     font-size: var(--font-size-sm);
   }
-  .broker-card__pros li::marker {
-    content: "+ ";
-    color: var(--color-accent);
+  .broker-card__pros li {
+    position: relative;
+    padding-left: var(--space-6);
   }
+  .broker-card__pros li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--color-positive);
+    font-weight: 800;
+  }
+
   .broker-card__actions {
     display: flex;
     flex-wrap: wrap;

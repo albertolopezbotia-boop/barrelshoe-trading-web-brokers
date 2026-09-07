@@ -11,11 +11,11 @@ const formatted = new Intl.NumberFormat('es-ES', {
 }).format(value);
 ---
 <span class="rating" role="img" aria-label={`${formatted} sobre 5`}>
+  {showNumber && <span class="number">{formatted}</span>}
   <span class="stars" aria-hidden="true">
     <span class="stars-bg">★★★★★</span>
     <span class="stars-fill" style={`width: ${pct}%`}>★★★★★</span>
   </span>
-  {showNumber && <span class="number">{formatted}</span>}
 </span>
 <style>
   .rating {
@@ -26,23 +26,25 @@ const formatted = new Intl.NumberFormat('es-ES', {
   .stars {
     position: relative;
     display: inline-block;
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
     line-height: 1;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
   }
-  .stars-bg {
-    color: var(--color-border);
-  }
+  .stars-bg { color: var(--color-border-strong); }
   .stars-fill {
     position: absolute;
     inset: 0;
     overflow: hidden;
     white-space: nowrap;
-    color: var(--color-star);
+    color: var(--color-rating);
   }
   .number {
-    font-weight: 700;
+    font-weight: 800;
     font-size: var(--font-size-sm);
-    color: var(--color-text);
+    color: var(--color-ink);
+    background: var(--color-rating-bg);
+    border: 1px solid var(--color-rating-border);
+    border-radius: var(--radius-md);
+    padding: 2px 8px;
   }
 </style>

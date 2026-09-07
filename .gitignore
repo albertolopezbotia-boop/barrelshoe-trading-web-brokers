@@ -18,3 +18,6 @@ test-output.txt
 
 # sdd workspace
 .superpowers/
+
+# local editor / assistant config
+.claude/

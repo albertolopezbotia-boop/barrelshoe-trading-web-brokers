@@ -14,17 +14,30 @@ const { href, broker, label, ariaLabel } = Astro.props;
   rel="sponsored nofollow noopener"
   aria-label={ariaLabel}
 >
-  {label ?? `Abrir cuenta en ${broker}`}
+  <span>{label ?? `Abrir cuenta en ${broker}`}</span>
+  <span class="aff-btn__arrow" aria-hidden="true">›</span>
 </a>
 <style>
   .aff-btn {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
     background: var(--color-primary);
-    color: #fff;
+    color: var(--color-text-inverse);
     font-weight: 700;
-    padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    line-height: 1.2;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-pill);
     text-align: center;
+    box-shadow: 0 1px 2px rgba(11, 66, 184, 0.25);
+    transition: background 0.15s ease, transform 0.15s ease;
   }
-  .aff-btn:hover { background: var(--color-primary-dark); text-decoration: none; }
+  .aff-btn:hover {
+    background: var(--color-primary-dark);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+  .aff-btn__arrow { font-weight: 800; }
 </style>
