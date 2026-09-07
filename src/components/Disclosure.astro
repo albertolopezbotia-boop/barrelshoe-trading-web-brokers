@@ -1,0 +1,15 @@
+---
+import { SITE } from '../data/site';
+interface Props { variant?: 'banner' | 'inline'; }
+const { variant = 'banner' } = Astro.props;
+---
+<p class:list={['disclosure', variant]}>{SITE.affiliateDisclosure}</p>
+<style>
+  .disclosure { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+  .disclosure.banner {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+  }
+</style>
