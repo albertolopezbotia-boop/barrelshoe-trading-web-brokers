@@ -31,6 +31,11 @@ const monogram = (name: string) =>
 
 const rows = sortRows(entries.map(toRow), 'rank', 'asc');
 
+const shortLeverage = (s: string) => {
+  const m = s.match(/1[:：]\s?\d[\d.]*[KkMm]?/);
+  return m ? m[0].replace('：', ':').replace(/\s/g, '') : s.split(/[;(]/)[0]!.trim();
+};
+
 const instrumentFilters = [
   { key: 'forex', label: 'Forex' },
   { key: 'stocks', label: 'Acciones' },
@@ -130,27 +135,25 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
                 <a href={r.href} class="bk">
                   <span class="bk__mono" aria-hidden="true">{monogram(r.name)}</span>
                   <span class="bk__text">
-                    <span class="bk__name">
-                      {r.name}
-                      {showRank && r.rank === 1 && <span class="bk__pick">Nuestra elección</span>}
-                    </span>
+                    <span class="bk__name">{r.name}</span>
                     <span class="bk__rate">
                       <span class="bk__stars" aria-hidden="true">{stars(r.rating)}</span>
                       <span class="bk__review">Ver análisis ›</span>
                     </span>
+                    {showRank && r.rank === 1 && <span class="bk__pick">★ Nuestra elección</span>}
                   </span>
                 </a>
               </td>
               <td data-label="Regulación" class="cell-reg">
-                {r.regulatorTags.slice(0, 4).map((t) => <span class="tag">{t}</span>)}
-                {r.regulatorTags.length > 4 && (
-                  <span class="tag tag--more">+{r.regulatorTags.length - 4}</span>
+                {r.regulatorTags.slice(0, 2).map((t) => <span class="tag">{t}</span>)}
+                {r.regulatorTags.length > 2 && (
+                  <span class="tag tag--more">+{r.regulatorTags.length - 2}</span>
                 )}
               </td>
               <td data-label="Tipo" class="cell-type">
                 {r.brokerType.map((t) => <span class="tag tag--type">{t}</span>)}
               </td>
-              <td data-label="Apal. máx." class="cell-lev">{r.leverageMax}</td>
+              <td data-label="Apal. máx." class="cell-lev">{shortLeverage(r.leverageMax)}</td>
               <td data-label="Depósito mín." class="cell-dep">
                 {money({ amount: r.minDeposit, currency: r.minDepositCurrency })}
               </td>
@@ -358,6 +361,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
   }
   .filters__toggle[aria-expanded='true'] { background: var(--color-primary-tint); border-color: var(--color-primary); color: var(--color-primary); }
   .filters__adv { display: grid; gap: var(--space-4); padding-top: var(--space-1); }
+  .filters__adv[hidden] { display: none; }
   .filters__instr { border: 0; padding: 0; margin: 0; }
   .filters__instr legend {
     font-size: var(--font-size-xs);
@@ -399,7 +403,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
   .filters__empty { margin: 0; font-size: var(--font-size-sm); color: var(--color-text-muted); }
 
   .comparison__scroll { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); }
+  table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); table-layout: fixed; }
   caption { caption-side: top; text-align: left; color: var(--color-text-muted); padding-bottom: var(--space-2); }
 
   thead th {
@@ -413,6 +417,15 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
     white-space: nowrap;
     border-bottom: 1px solid var(--color-border);
   }
+  thead th:nth-child(1) { width: 13rem; }
+  thead th:nth-child(2) { width: 11rem; }
+  thead th:nth-child(3) { width: 5.5rem; }
+  thead th:nth-child(4) { width: 4.5rem; }
+  thead th:nth-child(5) { width: 6.5rem; }
+  thead th:nth-child(6) { width: 6.5rem; }
+  thead th:nth-child(7) { width: 4.5rem; }
+  thead th:nth-child(8) { width: 8.5rem; }
+  thead th:nth-child(9) { width: 2rem; }
   thead button {
     display: inline-flex;
     align-items: center;
@@ -432,7 +445,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
   thead button[data-active='true'] { color: var(--color-ink); }
 
   tbody .brow td {
-    padding: var(--space-3);
+    padding: var(--space-2) var(--space-3);
     border-bottom: 1px solid var(--color-border);
     vertical-align: middle;
   }
@@ -440,61 +453,74 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
   tbody .brow:hover { background: var(--color-surface); }
   tbody .brow.is-top:hover { background: var(--color-primary-tint); }
 
-  .cell-broker { display: flex; align-items: center; gap: var(--space-3); min-width: 15rem; }
+  .cell-broker { display: flex; align-items: center; gap: var(--space-2); }
   .rk {
     flex: 0 0 auto;
-    width: 1.5rem;
+    width: 1.1rem;
     text-align: center;
     font-weight: 800;
     color: var(--color-text-muted);
     font-variant-numeric: tabular-nums;
   }
-  .bk { display: flex; align-items: center; gap: var(--space-3); color: inherit; min-width: 0; }
+  .bk { display: flex; align-items: center; gap: var(--space-2); color: inherit; min-width: 0; }
   .bk:hover { text-decoration: none; }
   .bk:hover .bk__name { text-decoration: underline; }
   .bk__mono {
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: var(--radius-md);
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-sm);
     background: var(--color-ink);
     color: var(--color-text-inverse);
     font-weight: 800;
-    font-size: var(--font-size-xs);
-  }
-  .bk__name { display: block; font-weight: 700; color: var(--color-ink); }
-  .bk__pick {
-    display: inline-block;
-    margin-left: var(--space-2);
     font-size: 10px;
+  }
+  .bk__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .bk__name {
     font-weight: 700;
+    color: var(--color-ink);
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .bk__pick {
+    align-self: flex-start;
+    margin-top: 2px;
+    font-size: 9px;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.03em;
     color: var(--color-primary);
     background: var(--color-surface-raised);
     border: 1px solid var(--color-primary);
     border-radius: var(--radius-pill);
-    padding: 1px 6px;
+    padding: 0 5px;
+    white-space: nowrap;
   }
-  .bk__rate { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-xs); }
-  .bk__stars { color: var(--color-rating); letter-spacing: 1px; }
+  .bk__rate { display: flex; align-items: center; gap: var(--space-2); font-size: 11px; }
+  .bk__stars { color: var(--color-rating); letter-spacing: 0.5px; }
   .bk__review { color: var(--color-primary); font-weight: 600; }
 
-  .cell-reg { max-width: 15rem; }
+  .cell-reg, .cell-type {
+    line-height: 1.7;
+  }
   .tag {
     display: inline-block;
-    font-size: 11px;
+    font-size: 10px;
+    line-height: 1.4;
     color: var(--color-text-muted);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
-    padding: 1px 6px;
-    margin: 1px 2px 1px 0;
+    padding: 0 4px;
+    margin: 0 3px 2px 0;
+    white-space: nowrap;
   }
-  .tag--type { color: var(--color-text); font-weight: 600; }
-  .tag--more { font-weight: 700; }
+  .tag--type { color: var(--color-text); font-weight: 700; }
+  .tag--more { font-weight: 700; color: var(--color-text); }
   .cell-lev, .cell-dep, .cell-comm { white-space: nowrap; font-weight: 600; color: var(--color-ink); }
   .score {
     font-weight: 800;
@@ -539,7 +565,10 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
   .detail dt { color: var(--color-text-muted); }
   .detail dd { margin: 0; font-weight: 600; color: var(--color-ink); text-align: right; }
 
-  @media (max-width: 860px) {
+  .comparison__scroll table { min-width: 60rem; }
+
+  @media (max-width: 640px) {
+    .comparison__scroll table { min-width: 0; }
     thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); }
     table, tbody, .brow, .drow, .brow td, .drow td { display: block; width: 100%; }
     .brow {
