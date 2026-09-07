@@ -1,0 +1,35 @@
+---
+interface Props {
+  items: Array<{ question: string; answer: string }>;
+  heading?: string;
+}
+const { items, heading } = Astro.props;
+---
+<section class="faq">
+  <h2>{heading ?? 'Preguntas frecuentes'}</h2>
+  {items.map((item) => (
+    <details>
+      <summary>{item.question}</summary>
+      <p>{item.answer}</p>
+    </details>
+  ))}
+</section>
+<style>
+  .faq h2 {
+    font-size: var(--font-size-xl);
+    margin: 0 0 var(--space-4);
+  }
+  details {
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-3) 0;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+  details p {
+    margin: var(--space-3) 0 0;
+    color: var(--color-text-muted);
+    line-height: var(--line-base);
+  }
+</style>
