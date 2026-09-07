@@ -10,7 +10,7 @@ rank: 10
 rating: 3.1
 ratingBreakdown: { fees: 3.5, platforms: 3.0, deposits: 3.5, support: 3.0, regulation: 2.5 }
 regulators:
-  - { authority: "ASIC", country: "Australia", licenseNumber: "AFSL 516246", status: "activa" }
+  - { authority: "ASIC", country: "Australia", licenseNumber: "AFSL 516246 (VT Global Pty Ltd; solo clientes mayoristas e institucionales)", status: "activa" }
   - { authority: "FSCA", country: "Sudáfrica", licenseNumber: "FSP 50865", status: "activa" }
   - { authority: "FSC", country: "Mauricio", licenseNumber: "GB23202269", status: "activa" }
 minDeposit: { amount: 50, currency: "USD" }
@@ -23,7 +23,7 @@ accountTypes:
   - { name: "Raw ECN", spreadFrom: 0.0, commission: "Desde 3 USD por lado (unos 6 USD por lote ida y vuelta)", minDeposit: { amount: 100, currency: "USD" } }
 platforms: ["MT4", "MT5", "propia"]
 instruments: { forex: true, indices: true, commodities: true, gold: true, stocks: true, crypto: true, etfs: true }
-leverageMax: "1:500 en la entidad offshore; 1:30 para minoristas bajo ASIC"
+leverageMax: "1:500 en la entidad offshore; la entidad australiana (ASIC) solo opera con clientes mayoristas e institucionales, no minoristas"
 copyTrading: true
 easAllowed: true
 scalpingAllowed: true
@@ -32,24 +32,25 @@ islamicAccount: true
 paymentMethods: ["Tarjeta de crédito/débito", "Transferencia bancaria", "Skrill", "Neteller", "FasaPay", "UnionPay", "Criptomonedas", "Métodos de pago locales"]
 withdrawalTimeTypical: "Solicitudes procesadas en torno a 1 día hábil; 1-3 días hábiles a tarjeta y monederos, hasta 5 días en transferencia internacional"
 withdrawalFees: "Sin comisión de VT Markets en la mayoría de métodos; las transferencias internacionales pueden tener coste bancario"
-ownership: "VT Markets (marca del grupo VT Markets), con presencia en Sídney (Australia); fundada en 2015"
+ownership: "VT Markets (marca del grupo VT Markets), con presencia en Sídney (Australia); la licencia australiana AFSL 516246 la tiene VT Global Pty Ltd y cubre solo a clientes mayoristas; fundada en 2015"
 listedCompany: false
 globalOffices: ["Australia", "Sudáfrica", "Mauricio", "Emiratos Árabes Unidos", "Reino Unido"]
 groupEntities:
-  - "VT Markets Pty Ltd (Australia, ASIC AFSL 516246)"
+  - "VT Global Pty Ltd (Australia, ASIC AFSL 516246; solo clientes mayoristas e institucionales), con VT Markets Pty Ltd como representante autorizado"
   - "VT Markets (Pty) Ltd (Sudáfrica, FSCA FSP 50865)"
   - "VT Markets Ltd (Mauricio, FSC GB23202269)"
   - "VT Markets Ltd (San Vicente y las Granadinas, registro FSA)"
 support: { languages: ["Español", "Inglés", "Portugués", "Chino", "Árabe", "Tailandés", "Vietnamita"], hours: "24/5", channels: ["Chat en vivo", "Email", "Teléfono"] }
 pros:
-  - "Entidad australiana regulada por la ASIC y estructura multirregulada (FSCA en Sudáfrica, FSC en Mauricio)"
+  - "Estructura multirregulada: licencia ASIC en Australia (de alcance mayorista), FSCA en Sudáfrica y FSC en Mauricio"
   - "Cuenta Raw ECN con spreads desde 0,0 pips más comisión desde 3 USD por lado, depósito mínimo bajo (50 USD en la cuenta Cent) y cuenta islámica"
   - "MT4 y MT5 más app propia con TradingView integrado, copy trading y compatibilidad con expert advisors y scalping"
 cons:
   - "VT Markets no tiene entidad regulada en la UE: un residente en España se registra con la filial de Mauricio (FSC) o el registro de San Vicente y las Granadinas, sin protección MiFID ni fondo de compensación europeo"
-  - "Los clientes de Latinoamérica también operan con esas entidades offshore, con menos garantías que ASIC"
-  - "Sin cTrader; el apalancamiento de 1:500 solo aplica en la entidad offshore (1:30 para minoristas en Australia)"
-bottomLine: "VT Markets es un bróker asociado a Sídney y fundado en 2015, con entidad regulada por la ASIC y filiales en Sudáfrica y Mauricio. Ofrece MT4, MT5, app propia con TradingView, copy trading, cuenta islámica y cuenta Raw ECN desde 0,0 pips más comisión. Los clientes de España y Latinoamérica firman con la entidad de Mauricio o el registro de San Vicente, con menos protección."
+  - "La FCA británica mantiene a VT Markets en su lista de advertencias desde junio de 2023 por ofrecer o promocionar servicios financieros sin autorización en el Reino Unido; la entidad no está regulada para minoristas en la UE ni el Reino Unido"
+  - "Los clientes de Latinoamérica también operan con esas entidades offshore, con menos garantías que un régimen como el de la ASIC"
+  - "Sin cTrader; el apalancamiento de 1:500 solo aplica en la entidad offshore y la licencia australiana no cubre a clientes minoristas"
+bottomLine: "VT Markets es un bróker asociado a Sídney y fundado en 2015, con licencia ASIC de alcance mayorista y filiales en Sudáfrica y Mauricio. Ofrece MT4, MT5, app propia con TradingView, copy trading, cuenta islámica y cuenta Raw ECN desde 0,0 pips más comisión. Los clientes de España y Latinoamérica firman con la entidad de Mauricio o el registro de San Vicente, con menos protección."
 lastUpdated: 2026-09-07
 faq:
   - { question: "¿Con qué entidad de VT Markets se registra un cliente de España o Latinoamérica?", answer: "VT Markets no dispone de una entidad regulada en la Unión Europea. Un residente en España se registra con VT Markets Ltd, regulada por la FSC de Mauricio, o con la entidad registrada en San Vicente y las Granadinas. Los clientes de Latinoamérica se registran con esas mismas filiales offshore. No aplican la protección MiFID ni un fondo de compensación europeo o australiano." }
@@ -69,11 +70,14 @@ Latinoamérica.
 
 La distinción clave para un inversor español o latinoamericano es la entidad con
 la que firma. VT Markets no tiene una sociedad regulada en la Unión Europea. La
-entidad australiana (VT Markets Pty Ltd) está regulada por la ASIC y atiende a su
-mercado local; en Sudáfrica opera bajo la FSCA. Los clientes de España y
-Latinoamérica se registran con VT Markets Ltd (Mauricio, FSC) o con la entidad
-registrada en San Vicente y las Granadinas, jurisdicciones con requisitos de
-capital y esquemas de compensación menos exigentes.
+licencia australiana (AFSL 516246, a nombre de VT Global Pty Ltd) solo cubre a
+clientes mayoristas e institucionales, no a minoristas; en Sudáfrica opera bajo la
+FSCA. Además, la FCA británica incluyó a VT Markets en su lista de advertencias en
+junio de 2023 por ofrecer o promocionar servicios financieros sin autorización en
+el Reino Unido. Los clientes de España y Latinoamérica se registran con VT Markets
+Ltd (Mauricio, FSC) o con la entidad registrada en San Vicente y las Granadinas,
+jurisdicciones con requisitos de capital y esquemas de compensación menos
+exigentes.
 
 ## Costes y comisiones
 
@@ -114,9 +118,8 @@ cada cliente.
 
 Todo se opera como contrato por diferencias, con apalancamiento y sin propiedad
 del subyacente. El apalancamiento máximo para minoristas llega a 1:500 en la
-entidad offshore; en Australia (ASIC) está limitado a 1:30 en los principales
-pares de divisas, con topes más bajos en índices, materias primas y
-criptomonedas.
+entidad offshore. La entidad australiana regulada por la ASIC solo presta servicio
+a clientes mayoristas e institucionales, no a minoristas.
 
 ## Tipos de cuenta
 
@@ -159,14 +162,16 @@ antes de depositar.
 
 VT Markets es una opción a considerar para quien quiere MT4 y MT5 junto con una
 app propia moderna con TradingView y copy trading, con cuenta demo, cuenta
-islámica y una cuenta Raw ECN de coste ajustado. La entidad australiana aporta
-regulación ASIC para su mercado local y el grupo mantiene una estructura
-multirregulada.
+islámica y una cuenta Raw ECN de coste ajustado. La licencia australiana de la
+ASIC solo cubre a clientes mayoristas, pero el grupo mantiene una estructura
+multirregulada con la FSCA sudafricana y la FSC de Mauricio.
 
 El matiz es la entidad con la que se firma: al no existir sociedad regulada en la
 UE, un cliente de España opera con la filial de Mauricio o el registro de San
 Vicente y las Granadinas, y lo mismo ocurre con los clientes de Latinoamérica,
 con menor protección en caso de insolvencia y sin un fondo de compensación
-estatal. Entendida esa diferencia, VT Markets es un bróker correcto para el
+estatal. A ello se suma la advertencia de la FCA británica de 2023 sobre la falta
+de autorización de VT Markets en el Reino Unido. Entendida esa diferencia, VT
+Markets es un bróker correcto para el
 operador de forex que prioriza costes y plataformas sobre garantías
 regulatorias.
