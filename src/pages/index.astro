@@ -14,21 +14,35 @@ const byRank = sortByRank(entries);
 const top3 = sortByRating(entries).slice(0, 3);
 const hasBrokers = entries.length > 0;
 
-const scoreFmt = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-const score10 = (r: number) => scoreFmt.format(Math.round(r * 2 * 10) / 10);
+const monogram = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0] ?? '')
+    .join('')
+    .toUpperCase();
 
-const dateFmt = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' });
-const lastUpdated = entries.length
-  ? dateFmt.format(entries.map((e) => e.data.lastUpdated).reduce((a, b) => (a > b ? a : b)))
-  : dateFmt.format(new Date());
-
-const catBadge: Record<string, string> = {
-  mt4: 'MT4',
-  mt5: 'MT5',
-  ctrader: 'cT',
-  'copy-trading': 'CT',
-  oro: 'Au',
+const catCardLabel: Record<string, string> = {
+  mt4: 'Los mejores brokers con MT4',
+  mt5: 'Los mejores brokers con MT5',
+  ctrader: 'Los mejores brokers con cTrader',
+  'copy-trading': 'Los mejores para copy trading',
+  oro: 'Los mejores brokers para oro',
 };
+
+type HeroCard = { href: string; label: string; mono?: string };
+const heroCards: HeroCard[] = [
+  ...CATEGORIES.map((c) => ({
+    href: `/mejores-brokers/${c.slug}/`,
+    label: catCardLabel[c.slug] ?? `Los mejores brokers · ${c.shortTitle}`,
+  })),
+  { href: '#comparativa', label: 'Comparativa de los 10 brokers' },
+  ...top3.slice(0, 2).map((e) => ({
+    href: `/brokers/${e.slug}/`,
+    label: `Reseña de ${e.data.name}`,
+    mono: monogram(e.data.name),
+  })),
+];
 
 const ld = [
   organizationLd(),
@@ -47,64 +61,30 @@ const ld = [
   jsonLd={ld}
 >
   <section class="hero">
-    <div class="container hero__grid">
-      <div class="hero__lead-col">
-        <p class="hero__eyebrow">Comparador independiente de brokers</p>
-        <h1>Los mejores brokers para <span class="hero__hl">España y Latinoamérica</span>, comparados</h1>
-        <p class="hero__lead">{SITE.description}</p>
-        <div class="hero__cta">
-          <a class="btn-grad" href="#comparativa">Ver la comparativa <span aria-hidden="true">→</span></a>
-          <a class="btn-ghost" href="/metodologia/">Cómo analizamos</a>
-        </div>
-        <ul class="hero__trust">
-          <li>{hasBrokers ? entries.length : 10} brokers analizados</li>
-          <li>Metodología pública</li>
-          <li>Actualizado {lastUpdated}</li>
-        </ul>
-      </div>
+    <div class="container">
+      <h1>Encuentra tu bróker para España y Latinoamérica</h1>
+      <p class="hero__lead">Compara reseñas, rankings y costes de los principales brokers de forex y CFDs, en español.</p>
 
-      {hasBrokers && (
-        <aside class="hero__top3" aria-label="Los tres mejores brokers ahora mismo">
-          <h2>Los 3 mejores ahora</h2>
-          <ol>
-            {top3.map((e, i) => (
-              <li class:list={{ first: i === 0 }}>
-                <span class="rk">{i + 1}</span>
-                <a href={`/brokers/${e.slug}/`}>{e.data.name}</a>
-                <span class="sc">{score10(e.data.rating)}<small>/10</small></span>
-              </li>
-            ))}
-          </ol>
-          <a class="hero__top3-link" href="#comparativa">Ver la comparativa completa ›</a>
-        </aside>
-      )}
+      <ul id="rankings" class="hero__cards" aria-label="Rankings y reseñas destacadas">
+        {heroCards.map((card) => (
+          <li>
+            <a href={card.href}>
+              <span class="hcard__icon" aria-hidden="true">
+                {card.mono ? (
+                  card.mono
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="6" />
+                    <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+                  </svg>
+                )}
+              </span>
+              <span class="hcard__label">{card.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
-  </section>
-
-  <section id="rankings" class="shell-section container">
-    <h2>Rankings por categoría</h2>
-    <ul class="cat-tiles">
-      {CATEGORIES.map((c) => (
-        <li>
-          <a href={`/mejores-brokers/${c.slug}/`}>
-            <span class="cat-tiles__badge" aria-hidden="true">{catBadge[c.slug] ?? c.shortTitle}</span>
-            <span class="cat-tiles__body">
-              <span class="cat-tiles__short">{c.shortTitle}</span>
-              <span class="cat-tiles__title">{c.title}</span>
-            </span>
-          </a>
-        </li>
-      ))}
-      <li>
-        <a href="#comparativa">
-          <span class="cat-tiles__badge" aria-hidden="true">↔</span>
-          <span class="cat-tiles__body">
-            <span class="cat-tiles__short">Comparativa</span>
-            <span class="cat-tiles__title">Los 10 brokers, tabla completa</span>
-          </span>
-        </a>
-      </li>
-    </ul>
   </section>
 
   <section id="comparativa" class="shell-section container">
@@ -146,192 +126,87 @@ const ld = [
 
 <style>
   .hero {
-    position: relative;
-    background: radial-gradient(120% 90% at 15% 0%, var(--color-shell-2), var(--color-shell) 60%);
+    background: var(--color-shell);
     color: var(--color-on-shell-dim);
     margin-top: calc(-1 * var(--header-h));
-    padding-top: calc(var(--header-h) + var(--space-12));
-    padding-bottom: var(--space-16);
-  }
-  .hero__grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-    align-items: center;
-  }
-  .hero__eyebrow {
-    font-size: var(--font-size-xs);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-coral);
-    margin-bottom: var(--space-3);
+    padding-top: calc(var(--header-h) + var(--space-8));
+    padding-bottom: var(--space-8);
+    text-align: center;
   }
   .hero h1 {
     color: var(--color-on-shell);
-    max-width: 16ch;
-    font-size: clamp(2.1rem, 4.5vw + 1rem, 3.4rem);
     font-weight: 800;
-  }
-  .hero__hl {
-    background: var(--grad-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    font-size: clamp(1.7rem, 2.4vw + 1rem, 2.4rem);
+    max-width: 22ch;
+    margin-inline: auto;
   }
   .hero__lead {
     color: var(--color-on-shell-dim);
-    font-size: var(--font-size-lg);
-    max-width: 46ch;
-    margin-top: var(--space-4);
+    font-size: var(--font-size-base);
+    max-width: 52ch;
+    margin: var(--space-3) auto 0;
   }
-  .hero__cta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: var(--space-6);
-  }
-  .btn-grad,
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-weight: 700;
-    font-size: var(--font-size-sm);
-    padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-pill);
-  }
-  .btn-grad {
-    background-image: var(--grad-brand);
-    color: #0b0620;
-    box-shadow: 0 8px 22px rgba(255, 107, 107, 0.28);
-  }
-  .btn-grad:hover { filter: brightness(1.06); text-decoration: none; }
-  .btn-ghost {
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    color: var(--color-on-shell);
-  }
-  .btn-ghost:hover { border-color: var(--color-on-shell); text-decoration: none; }
-  .hero__trust {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
+
+  .hero__cards {
     list-style: none;
     margin: var(--space-6) 0 0;
     padding: 0;
-  }
-  .hero__trust li {
-    font-size: var(--font-size-xs);
-    font-weight: 600;
-    color: var(--color-on-shell-dim);
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid var(--color-shell-border);
-    border-radius: var(--radius-pill);
-    padding: var(--space-1) var(--space-3);
-  }
-
-  .hero__top3 {
-    background: var(--color-surface-raised);
-    color: var(--color-text);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 30px 70px rgba(4, 1, 28, 0.55);
-    padding: var(--space-6);
-  }
-  .hero__top3 h2 {
-    font-size: var(--font-size-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text-muted);
-    margin: 0 0 var(--space-3);
-  }
-  .hero__top3 ol { list-style: none; margin: 0; padding: 0; }
-  .hero__top3 li {
     display: grid;
-    grid-template-columns: 1.5rem 1fr auto;
-    align-items: center;
     gap: var(--space-3);
-    padding: var(--space-3) 0;
-    border-bottom: 1px solid var(--color-border);
+    grid-template-columns: repeat(2, 1fr);
   }
-  .hero__top3 li:last-of-type { border-bottom: 0; }
-  .hero__top3 .rk {
-    width: 1.4rem;
-    height: 1.4rem;
+  .hero__cards a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    height: 100%;
+    text-align: center;
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    box-shadow: var(--shadow-card);
+    color: var(--color-text);
+    transition: transform 0.14s ease, box-shadow 0.14s ease;
+  }
+  .hero__cards a:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+    text-decoration: none;
+  }
+  .hcard__icon {
     display: grid;
     place-items: center;
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
-    background: var(--color-surface);
-    color: var(--color-text-muted);
+    background: var(--color-primary-tint);
+    color: var(--color-primary);
     font-weight: 800;
     font-size: var(--font-size-xs);
+    flex: 0 0 auto;
   }
-  .hero__top3 li.first .rk { background-image: var(--grad-brand); color: #0b0620; }
-  .hero__top3 li a { font-weight: 700; color: var(--color-ink); }
-  .hero__top3 .sc {
-    font-weight: 800;
-    color: var(--color-ink);
-    background: var(--color-rating-bg);
-    border: 1px solid var(--color-rating-border);
-    border-radius: var(--radius-md);
-    padding: 1px 7px;
-    font-size: var(--font-size-sm);
-    white-space: nowrap;
+  .hcard__icon svg { width: 1.05rem; height: 1.05rem; }
+  .hcard__label {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-text);
   }
-  .hero__top3 .sc small { color: var(--color-text-muted); font-weight: 600; }
-  .hero__top3 .sc { color: var(--color-ink); }
-  .hero__top3-link { display: inline-block; margin-top: var(--space-3); font-size: var(--font-size-sm); font-weight: 700; color: var(--color-primary); }
 
   .shell-section { padding-block: var(--space-12); }
   .shell-section > h2 { margin-bottom: var(--space-6); }
   .empty-state { margin-top: var(--space-4); color: var(--color-text-muted); font-size: var(--font-size-sm); }
 
-  .cat-tiles {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: var(--space-3);
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  }
-  .cat-tiles a {
-    display: flex;
-    gap: var(--space-3);
-    align-items: flex-start;
-    height: 100%;
-    background: var(--color-shell-raised);
-    border: 1px solid var(--color-shell-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-4);
-    color: var(--color-on-shell-dim);
-    transition: border-color 0.15s ease, transform 0.15s ease;
-  }
-  .cat-tiles a:hover { border-color: var(--color-sky); transform: translateY(-2px); text-decoration: none; }
-  .cat-tiles__badge {
-    flex: 0 0 auto;
-    display: grid;
-    place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--color-sky);
-    font-weight: 800;
-    font-size: var(--font-size-sm);
-  }
-  .cat-tiles__body { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
-  .cat-tiles__short {
-    font-size: var(--font-size-xs);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-coral);
-  }
-  .cat-tiles__title { font-weight: 700; color: var(--color-on-shell); line-height: var(--line-tight); }
-
   .methodology-teaser p { color: var(--color-text); }
   .methodology-teaser p + p { margin-top: var(--space-3); }
 
-  @media (min-width: 900px) {
-    .hero__grid { grid-template-columns: 1.05fr 0.95fr; }
+  @media (min-width: 560px) {
+    .hero__cards { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (min-width: 860px) {
+    .hero__cards { gap: var(--space-4); }
+    .hero__cards a { padding: var(--space-4) var(--space-3); }
   }
 </style>
