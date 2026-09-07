@@ -9,7 +9,7 @@ const oneDecimalRating = z
   .number()
   .min(0)
   .max(5)
-  .refine((v) => Number.isInteger(Math.round(v * 10)), {
+  .refine((v) => Math.abs(v * 10 - Math.round(v * 10)) < 1e-9, {
     message: 'rating admite como máximo 1 decimal',
   });
 

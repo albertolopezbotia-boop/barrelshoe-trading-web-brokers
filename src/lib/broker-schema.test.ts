@@ -31,6 +31,9 @@ describe('brokerSchema', () => {
   it('rejects rating above 5', () => {
     expect(brokerSchema.safeParse({ ...valid, rating: 5.5 }).success).toBe(false);
   });
+  it('rejects a rating with more than one decimal', () => {
+    expect(brokerSchema.safeParse({ ...valid, rating: 4.25 }).success).toBe(false);
+  });
   it('rejects fewer than 2 pros', () => {
     expect(brokerSchema.safeParse({ ...valid, pros: ['only one'] }).success).toBe(false);
   });
