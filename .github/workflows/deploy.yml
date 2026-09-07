@@ -28,3 +28,7 @@ jobs:
           git add -A
           git commit -q -m "build: ${GITHUB_SHA}"
           git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:deploy
+      - name: Notify Plesk to pull & deploy
+        env:
+          PLESK_DEPLOY_HOOK: ${{ secrets.PLESK_DEPLOY_HOOK }}
+        run: curl -fsS -X POST "$PLESK_DEPLOY_HOOK"
