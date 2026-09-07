@@ -1,0 +1,126 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../data/site';
+import { breadcrumbListLd } from '../lib/jsonld';
+
+const crumbs = [
+  { name: 'Inicio', path: '/' },
+  { name: 'Aviso legal', path: '/aviso-legal/' },
+];
+---
+
+<Layout
+  title={`Aviso legal | ${SITE.name}`}
+  description="Aviso legal de Barrelshoe Trading: titular del sitio, naturaleza informativa del contenido, divulgación de afiliación, advertencia de riesgo y legislación aplicable."
+  canonicalPath="/aviso-legal/"
+  jsonLd={[breadcrumbListLd(crumbs)]}
+>
+  <div class="container prose">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1>Aviso legal</h1>
+    <p class="lead">
+      Este aviso regula el uso del sitio web {SITE.name} ({SITE.url}). Al navegar por esta web
+      aceptas las condiciones que se describen a continuación.
+    </p>
+
+    <h2>Titular del sitio</h2>
+    <p>
+      El titular de este sitio web es el proyecto editorial <strong>{SITE.name}</strong>. Para
+      cualquier consulta relacionada con esta web puedes escribir a
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+    </p>
+
+    <h2>Naturaleza informativa del contenido</h2>
+    <p>
+      Todo el contenido de {SITE.name} tiene una finalidad exclusivamente informativa y
+      divulgativa. No constituye asesoramiento financiero, fiscal ni legal, ni una recomendación
+      personalizada de inversión, ni una oferta o invitación para comprar o vender ningún
+      instrumento financiero.
+    </p>
+    <p>
+      Las comparativas y valoraciones son opiniones editoriales basadas en nuestra
+      <a href="/metodologia/">metodología</a> pública y en la información disponible en el momento
+      de su publicación. Antes de abrir una cuenta o de operar, verifica las condiciones
+      directamente con el bróker y, si lo necesitas, consulta con un asesor debidamente
+      autorizado. La decisión de invertir y sus consecuencias son responsabilidad exclusiva del
+      usuario.
+    </p>
+
+    <h2>Divulgación de afiliación</h2>
+    <p>{SITE.affiliateDisclosure}</p>
+    <p>
+      Un enlace de afiliado es un enlace con un identificador que permite al bróker saber que el
+      visitante llega desde esta web. Si abres una cuenta a través de uno de esos enlaces,
+      Barrelshoe Trading puede recibir una comisión del bróker. Esa comisión <strong>no supone
+      ningún coste adicional para ti</strong>: las condiciones que obtienes son las mismas que si
+      entraras directamente en la web del bróker. La existencia de un acuerdo de afiliación
+      <strong>no condiciona la valoración</strong> ni la posición de un bróker en las
+      comparativas; las puntuaciones se calculan siempre con la metodología publicada. También
+      puede haber en la web brokers con los que no mantenemos ningún acuerdo de afiliación.
+    </p>
+
+    <h2>Advertencia de riesgo</h2>
+    <p>{SITE.riskWarning}</p>
+    <p>
+      El trading de forex y de CFDs no es adecuado para todos los inversores. Opera únicamente con
+      dinero que puedas permitirte perder y asegúrate de comprender por completo los riesgos.
+    </p>
+
+    <h2>Limitación de responsabilidad</h2>
+    <p>
+      {SITE.name} no se hace responsable de las pérdidas o daños, directos o indirectos, que
+      puedan derivarse del uso de la información publicada en esta web ni de las decisiones de
+      inversión tomadas a partir de ella. Tampoco responde de los contenidos, políticas o
+      servicios de los sitios de terceros a los que se enlaza, cuyo acceso se realiza bajo la
+      responsabilidad del usuario.
+    </p>
+
+    <h2>Exactitud de la información y cambios</h2>
+    <p>
+      Procuramos que la información sea correcta y esté actualizada, pero las condiciones de los
+      brokers (spreads, comisiones, promociones, disponibilidad por país) cambian con frecuencia y
+      pueden hacerlo sin previo aviso. No garantizamos que todos los datos estén libres de errores
+      ni que reflejen en todo momento la situación actual. {SITE.name} puede modificar, actualizar
+      o eliminar cualquier contenido de esta web, así como este aviso legal, en cualquier momento.
+    </p>
+
+    <h2>Propiedad intelectual</h2>
+    <p>
+      Los textos, el diseño, los logotipos y el resto de elementos de {SITE.name} están
+      protegidos por los derechos de propiedad intelectual e industrial. Se permite citar y
+      enlazar el contenido indicando la fuente, pero no su reproducción total o sustancial ni su
+      explotación comercial sin autorización previa. Las marcas y logotipos de los brokers
+      pertenecen a sus respectivos titulares y se utilizan únicamente con fines identificativos e
+      informativos.
+    </p>
+
+    <h2>Legislación aplicable y jurisdicción</h2>
+    <p>
+      Este aviso legal se rige por la legislación española. Para la resolución de cualquier
+      controversia relacionada con el sitio web o su contenido, las partes se someten a los
+      juzgados y tribunales de España, salvo que la normativa de consumo aplicable establezca otro
+      fuero.
+    </p>
+
+    <h2>Contacto</h2>
+    <p>
+      Para cualquier cuestión relacionada con este aviso legal, escribe a
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .prose {
+    padding-block: var(--space-8);
+    max-width: var(--container-narrow);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .prose h1 { margin: 0; }
+  .prose h2 { margin-top: var(--space-6); font-size: var(--font-size-xl); }
+  .prose p { margin: 0; }
+  .prose .lead { color: var(--color-text-muted); font-size: var(--font-size-lg); }
+</style>

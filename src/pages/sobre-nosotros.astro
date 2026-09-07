@@ -1,0 +1,78 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../data/site';
+import { organizationLd, breadcrumbListLd } from '../lib/jsonld';
+
+const crumbs = [
+  { name: 'Inicio', path: '/' },
+  { name: 'Sobre nosotros', path: '/sobre-nosotros/' },
+];
+---
+
+<Layout
+  title={`Sobre Barrelshoe Trading | ${SITE.name}`}
+  description="Quiénes somos: un proyecto editorial independiente que compara y analiza brokers de forex y CFDs para traders de España y Latinoamérica."
+  canonicalPath="/sobre-nosotros/"
+  jsonLd={[organizationLd(), breadcrumbListLd(crumbs)]}
+>
+  <div class="container prose">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1>Sobre Barrelshoe Trading</h1>
+    <p class="lead">{SITE.tagline}.</p>
+
+    <h2>Quiénes somos</h2>
+    <p>
+      Barrelshoe Trading es un proyecto editorial independiente que compara y analiza brokers de
+      forex y CFDs para traders de España y Latinoamérica. Nuestro objetivo es que puedas elegir
+      un bróker con criterio: reunimos en un mismo sitio los datos que importan —costes,
+      regulación, plataformas, depósitos y retiros, atención al cliente— y los presentamos de
+      forma comparable y en español.
+    </p>
+    <p>
+      No dependemos de ningún bróker ni grupo financiero. El proyecto se financia con comisiones
+      de afiliación que no afectan a las valoraciones, tal y como explicamos en el
+      <a href="/aviso-legal/">aviso legal</a>.
+    </p>
+
+    <h2>Qué no hacemos</h2>
+    <ul>
+      <li>No somos un bróker ni un intermediario financiero.</li>
+      <li>No gestionamos ni custodiamos dinero de clientes.</li>
+      <li>No ofrecemos señales de trading, copy trading gestionado ni gestión de carteras.</li>
+      <li>
+        No damos asesoramiento financiero ni recomendaciones personalizadas de inversión: el
+        contenido es informativo.
+      </li>
+    </ul>
+
+    <h2>Cómo trabajamos</h2>
+    <p>
+      Analizamos todos los brokers con el mismo procedimiento y los mismos criterios, y publicamos
+      cómo lo hacemos. Puedes consultar los pesos de cada área, los criterios de inclusión y las
+      fuentes de datos en nuestra <a href="/metodologia/">metodología</a>. Cada review lleva una
+      fecha de última actualización y revisamos los datos de forma periódica.
+    </p>
+
+    <h2>Contacto</h2>
+    <p>
+      Para sugerencias, correcciones o consultas, escríbenos a
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .prose {
+    padding-block: var(--space-8);
+    max-width: var(--container-narrow);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .prose h1 { margin: 0; }
+  .prose h2 { margin-top: var(--space-6); font-size: var(--font-size-xl); }
+  .prose p, .prose ul { margin: 0; }
+  .prose ul { padding-left: var(--space-6); display: flex; flex-direction: column; gap: var(--space-2); }
+  .prose .lead { color: var(--color-text-muted); font-size: var(--font-size-lg); }
+</style>

@@ -1,0 +1,194 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../data/site';
+import { WEIGHTS } from '../lib/rating';
+import { organizationLd, breadcrumbListLd } from '../lib/jsonld';
+
+const crumbs = [
+  { name: 'Inicio', path: '/' },
+  { name: 'Metodología', path: '/metodologia/' },
+];
+
+const areas: Array<{ key: keyof typeof WEIGHTS; label: string; measures: string }> = [
+  {
+    key: 'fees',
+    label: 'Costes',
+    measures:
+      'Spread típico en pares mayores, comisiones por operación, swaps nocturnos, comisiones de inactividad y cualquier coste de retirada o conversión de divisa.',
+  },
+  {
+    key: 'platforms',
+    label: 'Plataformas',
+    measures:
+      'Plataformas disponibles (MT4, MT5, cTrader o plataforma propia), calidad de las apps móviles, herramientas de análisis y compatibilidad con robots y automatización.',
+  },
+  {
+    key: 'regulation',
+    label: 'Regulación',
+    measures:
+      'Licencias en vigor y su nivel de protección, entidad con la que se firma el contrato, segregación de fondos, fondo de garantía y protección de saldo negativo.',
+  },
+  {
+    key: 'deposits',
+    label: 'Depósitos y retiros',
+    measures:
+      'Métodos de pago admitidos, depósito mínimo, plazos reales de retirada, comisiones asociadas y facilidad del proceso de verificación.',
+  },
+  {
+    key: 'support',
+    label: 'Atención al cliente',
+    measures:
+      'Horario y canales de contacto, atención en español, tiempo de respuesta y calidad de la documentación y los materiales de ayuda.',
+  },
+];
+
+const pct = (n: number) => `${Math.round(n * 100)} %`;
+---
+
+<Layout
+  title={`Metodología: cómo analizamos los brokers | ${SITE.name}`}
+  description="Cómo puntuamos y seleccionamos los brokers de Barrelshoe Trading: pesos de cada área, criterios de inclusión, fuentes de datos e independencia editorial."
+  canonicalPath="/metodologia/"
+  jsonLd={[organizationLd(), breadcrumbListLd(crumbs)]}
+>
+  <div class="container prose">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1>Metodología: cómo analizamos los brokers</h1>
+    <p class="lead">
+      En Barrelshoe Trading analizamos cada bróker con el mismo procedimiento para que las
+      comparativas sean coherentes y verificables. En esta página explicamos cómo asignamos la
+      puntuación, por qué incluimos unos brokers y no otros, de dónde salen los datos y cómo se
+      financia el proyecto.
+    </p>
+
+    <h2>Cómo puntuamos</h2>
+    <p>
+      Puntuamos cada bróker de 0 a 5 en cinco áreas y calculamos una nota global ponderada. Los
+      pesos reflejan lo que más afecta al resultado y a la seguridad de un trader minorista a
+      largo plazo: los costes y la regulación pesan más que el resto.
+    </p>
+    <table>
+      <caption>Peso de cada área en la nota global</caption>
+      <thead>
+        <tr>
+          <th scope="col">Área</th>
+          <th scope="col">Peso</th>
+          <th scope="col">Qué mide</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          areas.map((area) => (
+            <tr>
+              <th scope="row">{area.label}</th>
+              <td>{pct(WEIGHTS[area.key])}</td>
+              <td>{area.measures}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+    <p>
+      La nota global es la media ponderada de las cinco áreas, redondeada a un decimal. Una nota
+      alta en costes no compensa una regulación débil: si un bróker no tiene regulación
+      verificable, no entra en la comparativa por muy competitivas que sean sus condiciones.
+    </p>
+
+    <h2>Por qué estos brokers y no otros</h2>
+    <p>
+      No intentamos listar todos los brokers del mercado, sino los que un trader de habla hispana
+      puede usar con garantías. Para entrar en la comparativa, un bróker debe cumplir estos
+      criterios:
+    </p>
+    <ul>
+      <li>
+        <strong>Regulación verificable.</strong> Licencia en vigor de un regulador reconocido,
+        comprobable en el registro público de ese organismo.
+      </li>
+      <li>
+        <strong>Disponibilidad para clientes de habla hispana.</strong> Acepta residentes de
+        España y de los principales países de Latinoamérica, con web y soporte en español.
+      </li>
+      <li>
+        <strong>Plataformas estándar del sector.</strong> Ofrece MetaTrader 4, MetaTrader 5 o
+        cTrader, de modo que las herramientas y los conocimientos del trader sean portables.
+      </li>
+      <li>
+        <strong>Historial y reputación.</strong> Varios años de actividad, sin sanciones graves
+        recientes ni un patrón de quejas serias sobre retiradas o manipulación de precios.
+      </li>
+      <li>
+        <strong>Condiciones de trading competitivas.</strong> Spreads, comisiones y ejecución en
+        línea con la media del mercado o mejores.
+      </li>
+    </ul>
+
+    <h2>Fuentes de datos</h2>
+    <p>
+      Los datos proceden de dos tipos de fuente que cualquiera puede consultar:
+    </p>
+    <ul>
+      <li>
+        Las <strong>webs oficiales de los brokers</strong>: tipos de cuenta, spreads publicados,
+        comisiones, métodos de pago y condiciones legales.
+      </li>
+      <li>
+        Los <strong>registros públicos de los reguladores</strong>: para confirmar que la licencia
+        está en vigor y qué entidad presta el servicio.
+      </li>
+    </ul>
+    <p>
+      Las condiciones de los brokers cambian. Por eso cada review lleva una fecha de última
+      actualización y revisamos los datos de forma periódica. Si detectas un dato desfasado,
+      escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+    </p>
+
+    <h2>Cómo ganamos dinero</h2>
+    <p>
+      Barrelshoe Trading se financia con comisiones de afiliación: algunos enlaces a los brokers
+      son enlaces de afiliado y podemos recibir una comisión si abres una cuenta a través de
+      ellos, sin ningún coste adicional para ti. Puedes leer los detalles en el
+      <a href="/aviso-legal/">aviso legal</a>.
+    </p>
+    <p>
+      <strong>Independencia editorial.</strong> Las comisiones de afiliación no cambian las
+      puntuaciones ni el orden de las comparativas. La nota de cada bróker sale de la metodología
+      descrita en esta página y sería la misma si no existiera ningún acuerdo de afiliación.
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .prose {
+    padding-block: var(--space-8);
+    max-width: var(--container-narrow);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .prose h1 { margin: 0; }
+  .prose h2 { margin-top: var(--space-6); font-size: var(--font-size-xl); }
+  .prose p, .prose ul { margin: 0; }
+  .prose ul { padding-left: var(--space-6); display: flex; flex-direction: column; gap: var(--space-2); }
+  .prose .lead { color: var(--color-text-muted); font-size: var(--font-size-lg); }
+  .prose table {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+  }
+  .prose caption {
+    text-align: left;
+    padding: var(--space-2) var(--space-3);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+  .prose th, .prose td {
+    text-align: left;
+    padding: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    vertical-align: top;
+  }
+  .prose thead th { background: var(--color-surface); }
+  .prose tbody th { white-space: nowrap; }
+</style>

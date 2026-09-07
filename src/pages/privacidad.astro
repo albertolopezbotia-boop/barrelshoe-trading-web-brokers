@@ -1,0 +1,153 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../data/site';
+import { breadcrumbListLd } from '../lib/jsonld';
+
+const crumbs = [
+  { name: 'Inicio', path: '/' },
+  { name: 'Privacidad', path: '/privacidad/' },
+];
+---
+
+<Layout
+  title={`Política de privacidad y cookies | ${SITE.name}`}
+  description="Cómo trata Barrelshoe Trading los datos personales: responsable, datos recogidos, base jurídica, cookies técnicas y de afiliación, derechos RGPD y conservación."
+  canonicalPath="/privacidad/"
+  jsonLd={[breadcrumbListLd(crumbs)]}
+>
+  <div class="container prose">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1>Política de privacidad y cookies</h1>
+
+    <p class="note">
+      Este texto es una base y debe revisarse con un asesor legal antes de la puesta en
+      producción.
+    </p>
+
+    <p class="lead">
+      Esta política explica qué datos personales trata {SITE.name} a través de este sitio web, con
+      qué finalidad y qué derechos tienes sobre ellos.
+    </p>
+
+    <h2>Responsable del tratamiento</h2>
+    <p>
+      El responsable del tratamiento de los datos recogidos en esta web es el proyecto editorial
+      <strong>{SITE.name}</strong>. Puedes contactar en materia de protección de datos escribiendo
+      a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+    </p>
+
+    <h2>Datos que se recogen</h2>
+    <ul>
+      <li>
+        <strong>Formulario de contacto o correo electrónico.</strong> Si nos escribes, tratamos tu
+        dirección de correo y el contenido de tu mensaje para poder responderte.
+      </li>
+      <li>
+        <strong>Registros del servidor (logs).</strong> El alojamiento web puede registrar de
+        forma automática la dirección IP, la fecha y hora de acceso, el navegador y las páginas
+        solicitadas, con fines de seguridad y de funcionamiento técnico.
+      </li>
+      <li>
+        <strong>Cookies y tecnologías similares.</strong> Ver el apartado «Cookies» más abajo.
+      </li>
+    </ul>
+    <p>
+      Esta web no solicita datos de categorías especiales ni está dirigida a menores de edad.
+    </p>
+
+    <h2>Base jurídica del tratamiento</h2>
+    <p>
+      Conforme al Reglamento General de Protección de Datos (RGPD), las bases jurídicas son:
+    </p>
+    <ul>
+      <li>
+        <strong>Consentimiento</strong> del usuario para las cookies analíticas y de afiliación y,
+        en su caso, para recibir respuesta a una consulta.
+      </li>
+      <li>
+        <strong>Interés legítimo</strong> en mantener la seguridad del sitio y en analizar de
+        forma agregada su uso para mejorarlo.
+      </li>
+      <li>
+        <strong>Ejecución de medidas precontractuales o cumplimiento de obligaciones legales</strong>
+        cuando resulte aplicable.
+      </li>
+    </ul>
+
+    <h2>Cookies</h2>
+    <p>
+      Una cookie es un pequeño archivo que un sitio web guarda en tu navegador. Distinguimos dos
+      tipos:
+    </p>
+    <ul>
+      <li>
+        <strong>Cookies técnicas o necesarias.</strong> Imprescindibles para que la web funcione y
+        para recordar tus preferencias de privacidad. No requieren consentimiento.
+      </li>
+      <li>
+        <strong>Cookies analíticas y de afiliación.</strong> Nos ayudan a entender cómo se usa la
+        web y a atribuir las visitas a los brokers. Los <strong>enlaces de afiliado pueden activar
+        cookies de terceros</strong> (del propio bróker o de su red de afiliación) cuando haces
+        clic en ellos. Estas cookies solo se instalan si das tu consentimiento.
+      </li>
+    </ul>
+    <p>
+      Puedes retirar tu consentimiento o bloquear y eliminar las cookies en cualquier momento
+      desde la configuración de tu navegador. Bloquear las cookies técnicas puede afectar al
+      funcionamiento del sitio.
+    </p>
+
+    <h2>Derechos en materia de protección de datos</h2>
+    <p>
+      Tienes derecho a solicitar el <strong>acceso</strong> a tus datos, su <strong>rectificación</strong>
+      o <strong>supresión</strong>, la <strong>limitación</strong> de su tratamiento, a
+      <strong>oponerte</strong> al mismo y a la <strong>portabilidad</strong> de los datos que nos
+      hayas facilitado.
+    </p>
+    <p>
+      Para ejercer estos derechos, escribe a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      indicando el derecho que quieres ejercer. Si consideras que no hemos atendido correctamente
+      tu solicitud, puedes reclamar ante la autoridad de control competente (en España, la Agencia
+      Española de Protección de Datos).
+    </p>
+
+    <h2>Conservación de los datos</h2>
+    <p>
+      Los mensajes de contacto se conservan el tiempo necesario para atender tu consulta y, en su
+      caso, durante los plazos legales de prescripción de responsabilidades. Los registros del
+      servidor se conservan durante un periodo limitado con fines de seguridad. Las cookies tienen
+      la duración indicada por cada proveedor, que puede consultarse en el panel de configuración
+      de cookies del navegador.
+    </p>
+
+    <h2>Cambios en la política</h2>
+    <p>
+      Podemos actualizar esta política para adaptarla a cambios legales o de funcionamiento del
+      sitio. Publicaremos siempre la versión vigente en esta misma página; te recomendamos
+      revisarla de forma periódica.
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .prose {
+    padding-block: var(--space-8);
+    max-width: var(--container-narrow);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .prose h1 { margin: 0; }
+  .prose h2 { margin-top: var(--space-6); font-size: var(--font-size-xl); }
+  .prose p, .prose ul { margin: 0; }
+  .prose ul { padding-left: var(--space-6); display: flex; flex-direction: column; gap: var(--space-2); }
+  .prose .lead { color: var(--color-text-muted); font-size: var(--font-size-lg); }
+  .prose .note {
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-warning-bg);
+    border: 1px solid var(--color-warning-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+  }
+</style>
