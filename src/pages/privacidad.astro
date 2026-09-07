@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { SITE } from '../data/site';
-import { breadcrumbListLd } from '../lib/jsonld';
+import { organizationLd, breadcrumbListLd } from '../lib/jsonld';
 
 const crumbs = [
   { name: 'Inicio', path: '/' },
@@ -14,7 +14,7 @@ const crumbs = [
   title={`Política de privacidad y cookies | ${SITE.name}`}
   description="Cómo trata Barrelshoe Trading los datos personales: responsable, datos recogidos, base jurídica, cookies técnicas y de afiliación, derechos RGPD y conservación."
   canonicalPath="/privacidad/"
-  jsonLd={[breadcrumbListLd(crumbs)]}
+  jsonLd={[organizationLd(), breadcrumbListLd(crumbs)]}
 >
   <div class="container prose">
     <Breadcrumbs crumbs={crumbs} />

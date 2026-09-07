@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { SITE } from '../data/site';
-import { breadcrumbListLd } from '../lib/jsonld';
+import { organizationLd, breadcrumbListLd } from '../lib/jsonld';
 
 const crumbs = [
   { name: 'Inicio', path: '/' },
@@ -14,7 +14,7 @@ const crumbs = [
   title={`Aviso legal | ${SITE.name}`}
   description="Aviso legal de Barrelshoe Trading: titular del sitio, naturaleza informativa del contenido, divulgación de afiliación, advertencia de riesgo y legislación aplicable."
   canonicalPath="/aviso-legal/"
-  jsonLd={[breadcrumbListLd(crumbs)]}
+  jsonLd={[organizationLd(), breadcrumbListLd(crumbs)]}
 >
   <div class="container prose">
     <Breadcrumbs crumbs={crumbs} />
