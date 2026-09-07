@@ -1,0 +1,45 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const { title, description, canonicalPath, ogImage = "/og/default.png", noindex = false } = Astro.props;
+const canonical = new URL(canonicalPath, Astro.site).href;
+const ogImageAbs = new URL(ogImage, Astro.site).href;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageAbs} />
+    <meta property="og:locale" content="es_ES" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="visually-hidden" href="#contenido">Saltar al contenido</a>
+    <header class="site-header container"><a href="/">Barrelshoe Trading</a></header>
+    <main id="contenido"><slot /></main>
+    <footer class="site-footer container"><p>© {new Date().getFullYear()} Barrelshoe Trading</p></footer>
+    <style>
+      .site-header, .site-footer { padding-block: var(--space-4); }
+      .site-header { border-bottom: 1px solid var(--color-border); font-weight: 700; }
+      .site-footer { border-top: 1px solid var(--color-border); color: var(--color-text-muted); margin-top: var(--space-16); font-size: var(--font-size-sm); }
+    </style>
+  </body>
+</html>
