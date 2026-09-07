@@ -1,0 +1,73 @@
+---
+import { SITE } from '../data/site';
+import { CATEGORIES } from '../data/categories';
+
+const withSlash = (p: string) => (p.endsWith('/') ? p : `${p}/`);
+const current = withSlash(Astro.url.pathname);
+const isCurrent = (href: string) => withSlash(href) === current;
+---
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">{SITE.name}</a>
+    <nav class="site-nav" aria-label="Navegación principal">
+      <ul>
+        <li><a href="/" aria-current={isCurrent('/') ? 'page' : undefined}>Comparativa</a></li>
+        {CATEGORIES.map((c) => (
+          <li>
+            <a
+              href={`/mejores-brokers/${c.slug}/`}
+              aria-current={isCurrent(`/mejores-brokers/${c.slug}/`) ? 'page' : undefined}
+            >
+              {c.shortTitle}
+            </a>
+          </li>
+        ))}
+        <li><a href="/metodologia/" aria-current={isCurrent('/metodologia/') ? 'page' : undefined}>Metodología</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+  }
+  .header-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-block: var(--space-3);
+  }
+  .brand {
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+  }
+  .brand:hover { text-decoration: none; }
+  .site-nav ul {
+    display: flex;
+    gap: var(--space-4);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .site-nav a {
+    display: inline-block;
+    padding-block: var(--space-1);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+  }
+  .site-nav a:hover { color: var(--color-primary); }
+  @media (min-width: 640px) {
+    .header-inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: var(--space-4);
+    }
+  }
+</style>

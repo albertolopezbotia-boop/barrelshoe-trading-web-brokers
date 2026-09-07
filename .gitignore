@@ -14,3 +14,7 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+test-output.txt
+
+# sdd workspace
+.superpowers/

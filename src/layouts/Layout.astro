@@ -1,0 +1,43 @@
+---
+import "../styles/global.css";
+import Seo from "../components/Seo.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath: string;
+  ogImage?: string;
+  ogType?: string;
+  noindex?: boolean;
+  jsonLd?: object[];
+}
+
+const { title, description, canonicalPath, ogImage = "/og/default.png", ogType = "website", noindex = false, jsonLd = [] } = Astro.props;
+const canonical = new URL(canonicalPath, Astro.site).href;
+const ogImageAbs = new URL(ogImage, Astro.site).href;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Seo
+      title={title}
+      description={description}
+      canonical={canonical}
+      ogImage={ogImageAbs}
+      ogType={ogType}
+      noindex={noindex}
+      jsonLd={jsonLd}
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="visually-hidden" href="#contenido">Saltar al contenido</a>
+    <Header />
+    <main id="contenido"><slot /></main>
+    <Footer />
+  </body>
+</html>

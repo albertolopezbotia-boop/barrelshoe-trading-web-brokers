@@ -1,0 +1,108 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import CategoryRanking from '../../components/CategoryRanking.astro';
+import Faq from '../../components/Faq.astro';
+import Disclosure from '../../components/Disclosure.astro';
+import { SITE } from '../../data/site';
+import { CATEGORIES } from '../../data/categories';
+import { filterByCategory, sortByRating, type BrokerEntry } from '../../lib/brokers';
+import { itemListLd, faqPageLd, breadcrumbListLd, organizationLd } from '../../lib/jsonld';
+
+export async function getStaticPaths() {
+  const brokers = await getCollection('brokers');
+  const entries: BrokerEntry[] = brokers.map((e) => ({ slug: e.slug, data: e.data }));
+  return CATEGORIES.map((category) => {
+    const matched = sortByRating(filterByCategory(entries, category));
+    return { params: { categoria: category.slug }, props: { category, matched } };
+  });
+}
+
+const { category, matched } = Astro.props;
+
+const crumbs = [
+  { name: 'Inicio', path: '/' },
+  { name: 'Mejores brokers', path: '/#rankings' },
+  { name: category.shortTitle, path: `/mejores-brokers/${category.slug}/` },
+];
+
+const ld = [
+  organizationLd(),
+  itemListLd({
+    items: matched.map((e) => ({
+      name: e.data.name,
+      url: new URL(`/brokers/${e.slug}/`, SITE.url).href,
+    })),
+  }),
+  faqPageLd(category.faq),
+  breadcrumbListLd(crumbs),
+];
+
+const isEmpty = matched.length === 0;
+---
+
+<Layout
+  title={`${category.title} | ${SITE.name}`}
+  description={category.metaDescription}
+  canonicalPath={`/mejores-brokers/${category.slug}/`}
+  jsonLd={ld}
+>
+  <div class="container category-page">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1>{category.title}</h1>
+    <p class="intro">{category.intro}</p>
+    <Disclosure />
+
+    {
+      isEmpty && (
+        <p class="empty-state">
+          Aún no hay brokers en esta categoría. Estamos completando la comparativa y la
+          publicaremos aquí en cuanto esté lista.
+        </p>
+      )
+    }
+
+    <h2>Comparativa</h2>
+    <ComparisonTable
+      entries={matched}
+      showRank={false}
+      caption={`Brokers de la categoría ${category.shortTitle}`}
+    />
+
+    <h2>Ranking</h2>
+    <CategoryRanking entries={matched} />
+
+    <Faq items={category.faq} />
+  </div>
+</Layout>
+
+<style>
+  .category-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-block: var(--space-8);
+  }
+  .category-page h1 {
+    margin: 0;
+  }
+  .category-page h2 {
+    margin: var(--space-4) 0 0;
+  }
+  .intro {
+    margin: 0;
+    max-width: 65ch;
+    color: var(--color-text-muted);
+  }
+  .empty-state {
+    margin: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    max-width: 65ch;
+  }
+</style>

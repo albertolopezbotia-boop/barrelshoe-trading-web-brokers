@@ -1,0 +1,115 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import ComparisonTable from '../components/ComparisonTable.astro';
+import CategoryRanking from '../components/CategoryRanking.astro';
+import Disclosure from '../components/Disclosure.astro';
+import { SITE } from '../data/site';
+import { CATEGORIES } from '../data/categories';
+import { sortByRank, sortByRating, type BrokerEntry } from '../lib/brokers';
+import { organizationLd, websiteLd, itemListLd } from '../lib/jsonld';
+
+const raw = await getCollection('brokers');
+const entries: BrokerEntry[] = raw.map((e) => ({ slug: e.slug, data: e.data }));
+const byRank = sortByRank(entries);
+const top3 = sortByRating(entries).slice(0, 3);
+const hasBrokers = entries.length > 0;
+
+const ld = [
+  organizationLd(),
+  websiteLd(),
+  itemListLd({
+    items: top3.map((e) => ({ name: e.data.name, url: new URL(`/brokers/${e.slug}/`, SITE.url).href })),
+  }),
+];
+---
+<Layout
+  title={`${SITE.name} — ${SITE.tagline}`}
+  description={SITE.description}
+  canonicalPath="/"
+  jsonLd={ld}
+>
+  <section class="hero container">
+    <h1>Comparador de brokers para España y Latinoamérica</h1>
+    <p class="hero__lead">{SITE.description}</p>
+    <Disclosure />
+  </section>
+
+  <section id="comparativa" class="home-section container">
+    <h2>Comparativa de brokers</h2>
+    <ComparisonTable
+      entries={byRank}
+      showFilters
+      caption="Comparativa de los brokers analizados por Barrelshoe Trading"
+    />
+    {!hasBrokers && (
+      <p class="empty-state">
+        Próximamente: estamos terminando de analizar los brokers y publicaremos la comparativa muy pronto.
+      </p>
+    )}
+  </section>
+
+  <section class="home-section container">
+    <h2>Los 3 mejores brokers ahora mismo</h2>
+    <CategoryRanking entries={top3} />
+    {!hasBrokers && (
+      <p class="empty-state">
+        Próximamente: el ranking con los mejores brokers estará disponible en breve.
+      </p>
+    )}
+  </section>
+
+  <section id="rankings" class="home-section container">
+    <h2>Rankings por categoría</h2>
+    <ul class="cat-links">
+      {CATEGORIES.map((c) => (
+        <li><a href={`/mejores-brokers/${c.slug}/`}>{c.title}</a></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="home-section container-narrow">
+    <h2>Nuestra metodología</h2>
+    <p>{SITE.methodologyBlurb}</p>
+    <p><a href="/metodologia/">Ver la metodología completa →</a></p>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .hero__lead {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-muted);
+    max-width: 60ch;
+  }
+  .home-section {
+    padding-block: var(--space-8);
+  }
+  .home-section > h2 {
+    margin-bottom: var(--space-6);
+  }
+  .empty-state {
+    margin-top: var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+  .cat-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+  .cat-links a {
+    display: block;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+  }
+</style>
