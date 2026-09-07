@@ -1,0 +1,299 @@
+---
+import type { BrokerEntry } from '../lib/brokers';
+import { toRow, sortRows } from '../lib/table';
+import { money, pips } from '../lib/format';
+import AffiliateButton from './AffiliateButton.astro';
+
+interface Props {
+  entries: BrokerEntry[];
+  caption?: string;
+  showFilters?: boolean;
+}
+
+const { entries, caption, showFilters = false } = Astro.props;
+
+const rows = sortRows(entries.map(toRow), 'rank', 'asc');
+
+const platformOptions = [...new Set(rows.flatMap((r) => r.platforms))].sort((a, b) =>
+  a.localeCompare(b, 'es'),
+);
+const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a, b) =>
+  a.localeCompare(b, 'es'),
+);
+
+const columns: { key: string; label: string; sort?: string }[] = [
+  { key: 'rank', label: '#', sort: 'rank' },
+  { key: 'name', label: 'Broker' },
+  { key: 'rating', label: 'Valoración', sort: 'rating' },
+  { key: 'minDeposit', label: 'Depósito mínimo', sort: 'minDeposit' },
+  { key: 'spread', label: 'Spread EUR/USD', sort: 'spread' },
+  { key: 'platforms', label: 'Plataformas' },
+  { key: 'regulators', label: 'Reguladores' },
+  { key: 'cta', label: 'Cuenta' },
+];
+---
+
+<div class="comparison" data-comparison>
+  {
+    showFilters && (
+      <div class="comparison__filters">
+        <label>
+          <span>Plataforma</span>
+          <select data-filter="platform">
+            <option value="">Todas las plataformas</option>
+            {platformOptions.map((p) => (
+              <option value={p}>{p}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span>Regulador</span>
+          <select data-filter="regulator">
+            <option value="">Todos los reguladores</option>
+            {regulatorOptions.map((r) => (
+              <option value={r}>{r}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+    )
+  }
+
+  <div class="comparison__scroll">
+    <table data-comparison-table>
+      {caption && <caption>{caption}</caption>}
+      <thead>
+        <tr>
+          {
+            columns.map((c) => (
+              <th scope="col">
+                {c.sort ? (
+                  <button type="button" data-sort={c.sort}>
+                    {c.label}
+                  </button>
+                ) : (
+                  c.label
+                )}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((r) => (
+            <tr
+              data-slug={r.slug}
+              data-rating={r.rating}
+              data-rank={r.rank}
+              data-min-deposit={r.minDeposit}
+              data-spread={r.spread}
+              data-platforms={r.platforms.join('|')}
+              data-regulators={r.regulators.join('|')}
+            >
+              <td data-label="#">{r.rank}</td>
+              <td data-label="Broker">
+                <a href={r.href}>{r.name}</a>
+              </td>
+              <td data-label="Valoración">{r.rating.toFixed(1)}</td>
+              <td data-label="Depósito mínimo">{money({ amount: r.minDeposit, currency: 'USD' })}</td>
+              <td data-label="Spread EUR/USD">{pips(r.spread)}</td>
+              <td data-label="Plataformas">{r.platforms.join(', ')}</td>
+              <td data-label="Reguladores">{r.regulators.join(', ')}</td>
+              <td data-label="Cuenta">
+                <AffiliateButton href={r.affiliateUrl} broker={r.name} label="Abrir cuenta" />
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  import { sortRows, filterRows, type Row, type SortKey } from '../lib/table';
+
+  const table = document.querySelector<HTMLTableElement>('[data-comparison-table]');
+  if (table) {
+    const tbody = table.querySelector('tbody')!;
+    const readRows = (): Row[] =>
+      [...tbody.querySelectorAll<HTMLTableRowElement>('tr')].map((tr) => ({
+        slug: tr.dataset.slug!,
+        name: '',
+        logo: '',
+        href: '',
+        affiliateUrl: '',
+        rating: Number(tr.dataset.rating),
+        rank: Number(tr.dataset.rank),
+        minDeposit: Number(tr.dataset.minDeposit),
+        spread: Number(tr.dataset.spread),
+        platforms: tr.dataset.platforms!.split('|'),
+        regulators: tr.dataset.regulators!.split('|'),
+      }));
+    const rowEls = new Map(
+      [...tbody.querySelectorAll<HTMLTableRowElement>('tr')].map((tr) => [tr.dataset.slug!, tr]),
+    );
+    const state = { key: 'rank' as SortKey, dir: 'asc' as 'asc' | 'desc', platform: '', regulator: '' };
+
+    const render = () => {
+      let rows = filterRows(readRows(), {
+        platform: state.platform || undefined,
+        regulator: state.regulator || undefined,
+      });
+      rows = sortRows(rows, state.key, state.dir);
+      const visible = new Set(rows.map((r) => r.slug));
+      [...rowEls.values()].forEach((tr) => (tr.hidden = !visible.has(tr.dataset.slug!)));
+      rows.forEach((r) => tbody.appendChild(rowEls.get(r.slug)!));
+      table.querySelectorAll<HTMLButtonElement>('th button[data-sort]').forEach((btn) => {
+        const active = btn.dataset.sort === state.key;
+        btn.setAttribute('aria-sort', active ? (state.dir === 'asc' ? 'ascending' : 'descending') : 'none');
+        btn.dataset.active = active ? String(true) : '';
+      });
+    };
+
+    table.querySelectorAll<HTMLButtonElement>('th button[data-sort]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.sort as SortKey;
+        state.dir = state.key === key && state.dir === 'asc' ? 'desc' : 'asc';
+        state.key = key;
+        render();
+      });
+    });
+    document
+      .querySelector<HTMLSelectElement>('[data-filter="platform"]')
+      ?.addEventListener('change', (e) => {
+        state.platform = (e.target as HTMLSelectElement).value;
+        render();
+      });
+    document
+      .querySelector<HTMLSelectElement>('[data-filter="regulator"]')
+      ?.addEventListener('change', (e) => {
+        state.regulator = (e.target as HTMLSelectElement).value;
+        render();
+      });
+  }
+</script>
+
+<style>
+  .comparison {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .comparison__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+  .comparison__filters label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+  .comparison__filters select {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font: inherit;
+  }
+  .comparison__scroll {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+  caption {
+    caption-side: top;
+    text-align: left;
+    color: var(--color-text-muted);
+    padding-bottom: var(--space-2);
+  }
+  th,
+  td {
+    text-align: left;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+  }
+  th {
+    color: var(--color-text-muted);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  th button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  th button::after {
+    content: "";
+    opacity: 0.4;
+  }
+  th button[aria-sort="ascending"]::after {
+    content: "\2191";
+    opacity: 1;
+  }
+  th button[aria-sort="descending"]::after {
+    content: "\2193";
+    opacity: 1;
+  }
+  th button[data-active="true"] {
+    color: var(--color-text);
+  }
+  tbody tr:hover {
+    background: var(--color-surface);
+  }
+
+  @media (max-width: 720px) {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    table,
+    tbody,
+    tr,
+    td {
+      display: block;
+      width: 100%;
+    }
+    tbody tr {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-4);
+      padding: var(--space-2);
+    }
+    td {
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--space-2) 0;
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+    td:last-child {
+      border-bottom: 0;
+    }
+    td::before {
+      content: attr(data-label);
+      font-weight: 700;
+      color: var(--color-text-muted);
+    }
+  }
+</style>
