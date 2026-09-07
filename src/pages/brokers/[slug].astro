@@ -1,0 +1,123 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import RatingStars from '../../components/RatingStars.astro';
+import ProsCons from '../../components/ProsCons.astro';
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import FactSheet from '../../components/FactSheet.astro';
+import RegulationTable from '../../components/RegulationTable.astro';
+import CompanyProfile from '../../components/CompanyProfile.astro';
+import Faq from '../../components/Faq.astro';
+import CategoryRanking from '../../components/CategoryRanking.astro';
+import Disclosure from '../../components/Disclosure.astro';
+import { SITE } from '../../data/site';
+import { relatedBrokers, type BrokerEntry } from '../../lib/brokers';
+import { reviewLd, faqPageLd, breadcrumbListLd, organizationLd } from '../../lib/jsonld';
+import { aggregateRating } from '../../lib/rating';
+
+export async function getStaticPaths() {
+  const brokers = await getCollection('brokers');
+  const entries: BrokerEntry[] = brokers.map((e) => ({ slug: e.slug, data: e.data }));
+  return brokers.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry, entries },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'brokers'>;
+  entries: BrokerEntry[];
+}
+
+const { entry, entries } = Astro.props;
+const d = entry.data;
+
+if (import.meta.env.DEV && Math.abs(aggregateRating(d.ratingBreakdown) - d.rating) > 0.15) {
+  throw new Error(
+    `${entry.slug}: rating ${d.rating} no coincide con el desglose (${aggregateRating(d.ratingBreakdown)})`,
+  );
+}
+
+const { Content } = await entry.render();
+const related = relatedBrokers(entries, entry.slug, 3);
+
+const crumbs = [
+  { name: 'Inicio', path: '/' },
+  { name: 'Brokers', path: '/#comparativa' },
+  { name: d.name, path: `/brokers/${entry.slug}/` },
+];
+
+const ld = [
+  organizationLd(),
+  reviewLd({ broker: d, slug: entry.slug }),
+  faqPageLd(d.faq),
+  breadcrumbListLd(crumbs.map((c) => ({ name: c.name, path: c.path }))),
+];
+---
+
+<Layout
+  title={`${d.name}: análisis y opiniones 2026 | ${SITE.name}`}
+  description={d.bottomLine}
+  canonicalPath={`/brokers/${entry.slug}/`}
+  ogImage={`/og/${entry.slug}.png`}
+  jsonLd={ld}
+>
+  <div class="container broker-review">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <header class="broker-head">
+      <img src={d.logo} alt={`Logo de ${d.name}`} width="120" height="48" />
+      <h1>{d.name}: análisis, spreads y opiniones</h1>
+      <RatingStars value={d.rating} showNumber />
+      <p class="bottom-line">{d.bottomLine}</p>
+      <AffiliateButton href={d.affiliateUrl} broker={d.name} />
+      <Disclosure variant="inline" />
+    </header>
+
+    <FactSheet broker={d} />
+    <ProsCons pros={d.pros} cons={d.cons} />
+
+    <section class="review-body">
+      <Content />
+    </section>
+
+    <CompanyProfile broker={d} />
+    <RegulationTable regulators={d.regulators} />
+    <Faq items={d.faq} />
+
+    <section class="related">
+      <h2>Brokers relacionados</h2>
+      <CategoryRanking entries={related} />
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .broker-review {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding-block: var(--space-8);
+  }
+  .broker-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  .broker-head h1 {
+    margin: 0;
+  }
+  .broker-head .bottom-line {
+    margin: 0;
+    max-width: 65ch;
+    color: var(--color-text-muted);
+  }
+  .review-body :global(h2) {
+    margin-top: var(--space-6);
+  }
+  .related h2 {
+    margin: 0 0 var(--space-4);
+  }
+</style>
