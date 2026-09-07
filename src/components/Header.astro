@@ -13,9 +13,8 @@ const isCurrent = (href: string) => withSlash(href) === current;
 ---
 <header class:list={['site-header', { 'on-dark': onDark }]} data-on-dark={onDark ? '' : undefined}>
   <div class="container header-inner">
-    <a class="brand" href="/">
-      <span class="brand__mark" aria-hidden="true">B</span>
-      <span>{SITE.name}</span>
+    <a class="brand" href="/" aria-label={`${SITE.name} — inicio`}>
+      <img class="brand__logo" src="/brand/barrelshoe-logo.png" alt={SITE.name} width="525" height="114" />
     </a>
     <nav class="site-nav" aria-label="Navegación principal">
       <ul>
@@ -64,23 +63,11 @@ const isCurrent = (href: string) => withSlash(href) === current;
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
-    font-weight: 800;
-    letter-spacing: var(--letter-tight);
-    font-size: var(--font-size-lg);
-    color: var(--color-ink);
   }
   .brand:hover { text-decoration: none; }
-  .brand__mark {
-    display: grid;
-    place-items: center;
-    width: 1.6rem;
-    height: 1.6rem;
-    border-radius: var(--radius-sm);
-    background: var(--color-primary);
-    color: var(--color-text-inverse);
-    font-size: var(--font-size-sm);
-    font-weight: 800;
+  .brand__logo {
+    height: 1.9rem;
+    width: auto;
   }
   .site-nav ul {
     display: flex;
@@ -112,8 +99,6 @@ const isCurrent = (href: string) => withSlash(href) === current;
     border-bottom-color: transparent;
     backdrop-filter: none;
   }
-  .site-header.on-dark:not(.is-solid) .brand { color: var(--color-on-hero); }
-  .site-header.on-dark:not(.is-solid) .brand__mark { background: var(--color-on-hero); color: var(--color-hero); }
   .site-header.on-dark:not(.is-solid) .site-nav a { color: var(--color-on-hero-dim); }
   .site-header.on-dark:not(.is-solid) .site-nav a:hover,
   .site-header.on-dark:not(.is-solid) .site-nav a[aria-current="page"] { color: var(--color-on-hero); border-bottom-color: var(--color-on-hero); }
