@@ -1,49 +1,54 @@
 :root {
-  /* ---- color: neutrals ---- */
-  --color-bg: #faf9f7;          /* warm page background */
-  --color-surface: #f1f3f6;     /* cool light fill (selects, footer) */
+  /* ---- color: neutrals (barrelshoe.com — white + pale lavender) ---- */
+  --color-bg: #ffffff;
+  --color-surface: #f2f0fa;       /* pale lavender — sections, selects, footer */
   --color-surface-raised: #ffffff;
-  --color-border: #e6e8eb;
-  --color-border-strong: #d4d8dd;
-  --color-ink: #12161c;         /* headings */
-  --color-text: #232a31;
-  --color-text-muted: #5b6570;
+  --color-border: #e7e4f2;
+  --color-border-strong: #d3cde6;
+  --color-ink: #04011c;           /* headings — near-black violet */
+  --color-text: #2b2740;
+  --color-text-muted: #6a6580;
   --color-text-inverse: #ffffff;
 
-  /* ---- color: brand + semantic ---- */
-  --color-primary: #0b5cff;     /* actions only */
-  --color-primary-dark: #0842b8;
-  --color-primary-tint: #eef3ff;
+  /* ---- color: brand (barrelshoe.com violet / coral) ---- */
+  --color-primary: #7918ee;       /* actions, brand */
+  --color-primary-dark: #231c54;  /* hover / pressed — deep indigo */
+  --color-primary-tint: #f2f0fa;
+  --color-primary-hl: #7040f2;    /* translucent text highlight */
 
-  --color-positive: #1f6f43;
-  --color-positive-bg: #e7f6ee;
-  --color-positive-border: #bfe6cf;
+  /* positive / regulated / "activa" — folded into the brand (endorsed = on-brand) */
+  --color-positive: #4c1d95;
+  --color-positive-bg: #f2f0fa;
+  --color-positive-border: #d9d2f0;
 
-  --color-danger: #c0392b;
-  --color-danger-bg: #fdecea;
-  --color-danger-border: #f2b8b1;
+  /* danger / risk / alerts — coral */
+  --color-danger: #cc3f3f;
+  --color-danger-bg: #ffecec;
+  --color-danger-border: #ffcecb;
 
-  --color-rating: #f0b429;
-  --color-rating-bg: #fff5da;
-  --color-rating-border: #f0d68a;
+  /* rating — gold (star convention; no barrelshoe equivalent) */
+  --color-rating: #d99500;
+  --color-rating-bg: #fdf3d6;
+  --color-rating-border: #f0d99a;
 
   /* dark hero band (home) */
-  --color-hero: #081b3a;
-  --color-hero-2: #0c2650;
-  --color-hero-hl: #6ba6ff;
-  --color-on-hero: #eef2f8;
-  --color-on-hero-dim: #9db2d0;
+  --color-hero: #04011c;
+  --color-hero-2: #231c54;
+  --color-hero-hl: #b9a3ff;
+  --color-on-hero: #f2f0fa;
+  --color-on-hero-dim: #918cb8;
   --header-h: 3.5rem;
 
   /* ---- legacy aliases (kept so existing component CSS keeps working) ---- */
-  --color-accent: var(--color-positive);
+  --color-accent: var(--color-primary);
   --color-star: var(--color-rating);
-  --color-warning-bg: #fff6e5;
-  --color-warning-border: #e0a44a;
+  --color-warning-bg: var(--color-rating-bg);
+  --color-warning-border: var(--color-rating-border);
 
-  /* ---- typography ---- */
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-weight-display: 800;
+  /* ---- typography (barrelshoe.com — Poppins + DM Sans) ---- */
+  --font-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Poppins", "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-weight-display: 700;
   --letter-tight: -0.02em;
   --font-size-xs: 0.78rem;
   --font-size-sm: 0.88rem;
@@ -72,9 +77,9 @@
   --radius-md: 10px;
   --radius-lg: 16px;
   --radius-pill: 999px;
-  --shadow-card: 0 1px 2px rgba(16, 22, 30, 0.04), 0 6px 16px rgba(16, 22, 30, 0.06);
-  --shadow-card-hover: 0 2px 6px rgba(16, 22, 30, 0.07), 0 14px 30px rgba(16, 22, 30, 0.11);
-  --shadow-feature: 0 0 0 1.5px #c9dbff, 0 12px 30px rgba(11, 92, 255, 0.13);
+  --shadow-card: 0 1px 2px rgba(4, 1, 28, 0.04), 0 6px 16px rgba(4, 1, 28, 0.06);
+  --shadow-card-hover: 0 2px 6px rgba(4, 1, 28, 0.07), 0 14px 30px rgba(4, 1, 28, 0.12);
+  --shadow-feature: 0 0 0 1.5px #d9c9ff, 0 12px 30px rgba(121, 24, 238, 0.15);
 }
 
 @media (max-width: 639px) {
