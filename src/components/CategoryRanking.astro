@@ -1,0 +1,33 @@
+---
+import type { BrokerEntry } from '../lib/brokers';
+import BrokerCard from './BrokerCard.astro';
+
+interface Props {
+  entries: BrokerEntry[];
+}
+
+const { entries } = Astro.props;
+---
+
+<ol class="category-ranking">
+  {
+    entries.map((entry, i) => (
+      <li class="category-ranking__item">
+        <BrokerCard entry={entry} position={i + 1} />
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .category-ranking {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-8);
+  }
+  .category-ranking__item {
+    margin: 0;
+  }
+</style>
