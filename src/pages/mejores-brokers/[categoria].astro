@@ -46,6 +46,7 @@ const isEmpty = matched.length === 0;
   title={`${category.title} | ${SITE.name}`}
   description={category.metaDescription}
   canonicalPath={`/mejores-brokers/${category.slug}/`}
+  surface="bare"
   jsonLd={ld}
 >
   <div class="cat-hero">
@@ -70,7 +71,7 @@ const isEmpty = matched.length === 0;
       )
     }
 
-    <section class="cat-block">
+    <section class="cat-block island">
       <h2>Comparativa</h2>
       <ComparisonTable
         entries={matched}
@@ -79,32 +80,33 @@ const isEmpty = matched.length === 0;
       />
     </section>
 
-    <section class="cat-block">
+    <section class="cat-block island">
       <h2>Ranking</h2>
       <CategoryRanking entries={matched} />
     </section>
 
-    <Faq items={category.faq} />
+    <section class="island">
+      <Faq items={category.faq} />
+    </section>
   </div>
 </Layout>
 
 <style>
   .cat-hero {
-    background: linear-gradient(180deg, var(--color-primary-tint), var(--color-bg) 80%);
-    border-bottom: 1px solid var(--color-border);
-    padding-block: var(--space-6) var(--space-8);
+    background: radial-gradient(120% 100% at 15% 0%, var(--color-shell-2), var(--color-shell) 65%);
+    padding-block: var(--space-8) var(--space-12);
   }
   .cat-hero h1 { margin: var(--space-3) 0 var(--space-3); }
   .intro {
     margin: 0;
     max-width: 65ch;
-    color: var(--color-text-muted);
+    color: var(--color-on-shell-dim);
     font-size: var(--font-size-lg);
   }
   .cat-disc {
     margin: var(--space-4) 0 0;
     font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
+    color: var(--color-on-shell-dim);
   }
   .category-page {
     display: flex;

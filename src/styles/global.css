@@ -8,8 +8,8 @@ body {
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
   line-height: var(--line-base);
-  color: var(--color-text);
-  background: var(--color-bg);
+  color: var(--color-on-shell-dim);
+  background: var(--color-shell);
   -webkit-font-smoothing: antialiased;
 }
 h1, h2, h3, h4 {
@@ -17,20 +17,54 @@ h1, h2, h3, h4 {
   line-height: var(--line-tight);
   font-weight: var(--font-weight-display);
   letter-spacing: var(--letter-tight);
-  color: var(--color-ink);
+  color: var(--color-on-shell);
   text-wrap: balance;
 }
 h1 { font-size: var(--font-size-3xl); }
 h2 { font-size: var(--font-size-2xl); }
 h3 { font-size: var(--font-size-xl); }
-a { color: var(--color-primary); text-decoration: none; }
+a { color: var(--color-sky); text-decoration: none; }
 a:hover { text-decoration: underline; }
 img { max-width: 100%; height: auto; display: block; }
 table { border-collapse: collapse; width: 100%; }
-:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; border-radius: 2px; }
+:focus-visible { outline: 2px solid var(--color-sky); outline-offset: 2px; border-radius: 2px; }
 
 .container { max-width: var(--container-max); margin-inline: auto; padding-inline: var(--space-4); }
 .container-narrow { max-width: var(--container-narrow); margin-inline: auto; padding-inline: var(--space-4); }
+
+/* ---- light content surface floating on the dark shell ---- */
+.main--island {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  max-width: var(--container-max);
+  margin: var(--space-8) auto var(--space-12);
+  border-radius: var(--radius-lg);
+  padding-block: var(--space-6);
+  box-shadow: var(--shadow-card);
+}
+.island {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-card);
+}
+.main--island :is(h1, h2, h3, h4),
+.island :is(h1, h2, h3, h4) { color: var(--color-ink); }
+.main--island .breadcrumbs ol,
+.island .breadcrumbs ol { color: var(--color-text-muted); }
+.main--island .breadcrumbs [aria-current="page"],
+.island .breadcrumbs [aria-current="page"] { color: var(--color-text); }
+.main--island :is(p, li, dd, dt, td, th, summary),
+.island :is(p, li, dd, dt, td, th, summary) { color: var(--color-text); }
+.main--island a:not([class]),
+.island a:not([class]) { color: var(--color-primary); }
+.main--island :focus-visible,
+.island :focus-visible { outline-color: var(--color-primary); }
+
+@media (max-width: 720px) {
+  .main--island { margin-inline: 0; border-radius: 0; }
+}
 
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;

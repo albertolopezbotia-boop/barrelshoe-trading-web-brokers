@@ -13,9 +13,11 @@ interface Props {
   noindex?: boolean;
   jsonLd?: object[];
   headerVariant?: 'default' | 'onDark';
+  /** 'island' = light content sheet on the dark shell (default); 'bare' = page owns its own sections */
+  surface?: 'island' | 'bare';
 }
 
-const { title, description, canonicalPath, ogImage = "/og/default.png", ogType = "website", noindex = false, jsonLd = [], headerVariant = 'default' } = Astro.props;
+const { title, description, canonicalPath, ogImage = "/og/default.png", ogType = "website", noindex = false, jsonLd = [], headerVariant = 'default', surface = 'island' } = Astro.props;
 const canonical = new URL(canonicalPath, Astro.site).href;
 const ogImageAbs = new URL(ogImage, Astro.site).href;
 ---
@@ -39,7 +41,7 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
   <body class:list={{ 'hero-dark': headerVariant === 'onDark' }}>
     <a class="visually-hidden" href="#contenido">Saltar al contenido</a>
     <Header onDark={headerVariant === 'onDark'} />
-    <main id="contenido"><slot /></main>
+    <main id="contenido" class:list={{ 'main--island': surface === 'island' }}><slot /></main>
     <Footer />
   </body>
 </html>

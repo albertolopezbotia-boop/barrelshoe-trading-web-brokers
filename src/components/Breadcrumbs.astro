@@ -27,12 +27,13 @@ const { crumbs } = Astro.props;
     padding: 0;
     margin: 0;
     font-size: var(--font-size-sm);
-    color: var(--color-text-muted);
+    color: var(--color-on-shell-dim);
   }
+  .breadcrumbs a { color: inherit; }
   .breadcrumbs li:not(:first-child)::before {
     content: "/";
     margin-right: var(--space-2);
-    color: var(--color-border);
+    opacity: 0.5;
   }
-  .breadcrumbs [aria-current="page"] { color: var(--color-text); }
+  .breadcrumbs [aria-current="page"] { color: var(--color-on-shell); }
 </style>

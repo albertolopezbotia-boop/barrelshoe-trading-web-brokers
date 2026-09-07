@@ -43,22 +43,24 @@ const ld = [
   description={SITE.description}
   canonicalPath="/"
   headerVariant="onDark"
+  surface="bare"
   jsonLd={ld}
 >
   <section class="hero">
     <div class="container hero__grid">
       <div class="hero__lead-col">
+        <p class="hero__eyebrow">Comparador independiente de brokers</p>
         <h1>Los mejores brokers para <span class="hero__hl">España y Latinoamérica</span>, comparados</h1>
         <p class="hero__lead">{SITE.description}</p>
+        <div class="hero__cta">
+          <a class="btn-grad" href="#comparativa">Ver la comparativa <span aria-hidden="true">→</span></a>
+          <a class="btn-ghost" href="/metodologia/">Cómo analizamos</a>
+        </div>
         <ul class="hero__trust">
-          <li>✓ {hasBrokers ? entries.length : 10} brokers analizados</li>
-          <li>✓ Metodología pública</li>
-          <li>✓ Actualizado {lastUpdated}</li>
+          <li>{hasBrokers ? entries.length : 10} brokers analizados</li>
+          <li>Metodología pública</li>
+          <li>Actualizado {lastUpdated}</li>
         </ul>
-        <p class="hero__disc">
-          Contenido con enlaces de afiliado — no cambia nuestras valoraciones.
-          <a href="/aviso-legal/">Cómo ganamos dinero</a>.
-        </p>
       </div>
 
       {hasBrokers && (
@@ -79,7 +81,7 @@ const ld = [
     </div>
   </section>
 
-  <section id="rankings" class="home-section container">
+  <section id="rankings" class="shell-section container">
     <h2>Rankings por categoría</h2>
     <ul class="cat-tiles">
       {CATEGORIES.map((c) => (
@@ -105,44 +107,51 @@ const ld = [
     </ul>
   </section>
 
-  <section id="comparativa" class="home-section container">
+  <section id="comparativa" class="shell-section container">
     <h2>Comparativa de brokers</h2>
-    <ComparisonTable
-      entries={byRank}
-      showFilters
-      caption="Comparativa de los brokers analizados por Barrelshoe Trading"
-    />
-    {!hasBrokers && (
-      <p class="empty-state">
-        Próximamente: estamos terminando de analizar los brokers y publicaremos la comparativa muy pronto.
-      </p>
-    )}
+    <div class="island">
+      <ComparisonTable
+        entries={byRank}
+        showFilters
+        caption="Comparativa de los brokers analizados por Barrelshoe Trading"
+      />
+      {!hasBrokers && (
+        <p class="empty-state">
+          Próximamente: estamos terminando de analizar los brokers y publicaremos la comparativa muy pronto.
+        </p>
+      )}
+    </div>
   </section>
 
-  <section class="home-section container">
+  <section class="shell-section container">
     <h2>Los 3 mejores brokers ahora mismo</h2>
-    <CategoryRanking entries={top3} />
-    {!hasBrokers && (
-      <p class="empty-state">
-        Próximamente: el ranking con los mejores brokers estará disponible en breve.
-      </p>
-    )}
+    <div class="island">
+      <CategoryRanking entries={top3} />
+      {!hasBrokers && (
+        <p class="empty-state">
+          Próximamente: el ranking con los mejores brokers estará disponible en breve.
+        </p>
+      )}
+    </div>
   </section>
 
-  <section class="home-section container-narrow methodology-teaser">
-    <h2>Nuestra metodología</h2>
-    <p>{SITE.methodologyBlurb}</p>
-    <p><a href="/metodologia/">Ver la metodología completa →</a></p>
+  <section class="shell-section container container-narrow">
+    <div class="island methodology-teaser">
+      <h2>Nuestra metodología</h2>
+      <p>{SITE.methodologyBlurb}</p>
+      <p><a href="/metodologia/">Ver la metodología completa →</a></p>
+    </div>
   </section>
 </Layout>
 
 <style>
   .hero {
-    background: linear-gradient(160deg, var(--color-hero), var(--color-hero-2));
-    color: var(--color-on-hero);
+    position: relative;
+    background: radial-gradient(120% 90% at 15% 0%, var(--color-shell-2), var(--color-shell) 60%);
+    color: var(--color-on-shell-dim);
     margin-top: calc(-1 * var(--header-h));
-    padding-top: calc(var(--header-h) + var(--space-8));
-    padding-bottom: var(--space-12);
+    padding-top: calc(var(--header-h) + var(--space-12));
+    padding-bottom: var(--space-16);
   }
   .hero__grid {
     display: grid;
@@ -150,44 +159,82 @@ const ld = [
     gap: var(--space-8);
     align-items: center;
   }
-  .hero h1 {
-    color: var(--color-on-hero);
-    max-width: 18ch;
-    font-size: clamp(1.9rem, 4vw + 1rem, var(--font-size-3xl));
+  .hero__eyebrow {
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-coral);
+    margin-bottom: var(--space-3);
   }
-  .hero__hl { color: var(--color-hero-hl); }
+  .hero h1 {
+    color: var(--color-on-shell);
+    max-width: 16ch;
+    font-size: clamp(2.1rem, 4.5vw + 1rem, 3.4rem);
+    font-weight: 800;
+  }
+  .hero__hl {
+    background: var(--grad-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
   .hero__lead {
-    color: var(--color-on-hero-dim);
+    color: var(--color-on-shell-dim);
     font-size: var(--font-size-lg);
     max-width: 46ch;
-    margin-top: var(--space-3);
+    margin-top: var(--space-4);
   }
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+  .btn-grad,
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-pill);
+  }
+  .btn-grad {
+    background-image: var(--grad-brand);
+    color: #0b0620;
+    box-shadow: 0 8px 22px rgba(255, 107, 107, 0.28);
+  }
+  .btn-grad:hover { filter: brightness(1.06); text-decoration: none; }
+  .btn-ghost {
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: var(--color-on-shell);
+  }
+  .btn-ghost:hover { border-color: var(--color-on-shell); text-decoration: none; }
   .hero__trust {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
     list-style: none;
-    margin: var(--space-4) 0 0;
+    margin: var(--space-6) 0 0;
     padding: 0;
   }
   .hero__trust li {
     font-size: var(--font-size-xs);
     font-weight: 600;
-    color: var(--color-on-hero);
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--color-on-shell-dim);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--color-shell-border);
     border-radius: var(--radius-pill);
     padding: var(--space-1) var(--space-3);
   }
-  .hero__disc { margin-top: var(--space-4); font-size: var(--font-size-xs); color: var(--color-on-hero-dim); }
-  .hero__disc a { color: var(--color-hero-hl); }
 
   .hero__top3 {
     background: var(--color-surface-raised);
     color: var(--color-text);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    box-shadow: 0 24px 60px rgba(4, 12, 28, 0.45);
+    box-shadow: 0 30px 70px rgba(4, 1, 28, 0.55);
     padding: var(--space-6);
   }
   .hero__top3 h2 {
@@ -218,7 +265,7 @@ const ld = [
     font-weight: 800;
     font-size: var(--font-size-xs);
   }
-  .hero__top3 li.first .rk { background: var(--color-primary); color: var(--color-text-inverse); }
+  .hero__top3 li.first .rk { background-image: var(--grad-brand); color: #0b0620; }
   .hero__top3 li a { font-weight: 700; color: var(--color-ink); }
   .hero__top3 .sc {
     font-weight: 800;
@@ -231,10 +278,11 @@ const ld = [
     white-space: nowrap;
   }
   .hero__top3 .sc small { color: var(--color-text-muted); font-weight: 600; }
-  .hero__top3-link { display: inline-block; margin-top: var(--space-3); font-size: var(--font-size-sm); font-weight: 700; }
+  .hero__top3 .sc { color: var(--color-ink); }
+  .hero__top3-link { display: inline-block; margin-top: var(--space-3); font-size: var(--font-size-sm); font-weight: 700; color: var(--color-primary); }
 
-  .home-section { padding-block: var(--space-12); }
-  .home-section > h2 { margin-bottom: var(--space-6); }
+  .shell-section { padding-block: var(--space-12); }
+  .shell-section > h2 { margin-bottom: var(--space-6); }
   .empty-state { margin-top: var(--space-4); color: var(--color-text-muted); font-size: var(--font-size-sm); }
 
   .cat-tiles {
@@ -250,15 +298,14 @@ const ld = [
     gap: var(--space-3);
     align-items: flex-start;
     height: 100%;
-    background: var(--color-surface-raised);
-    border: 1px solid var(--color-border);
+    background: var(--color-shell-raised);
+    border: 1px solid var(--color-shell-border);
     border-radius: var(--radius-md);
     padding: var(--space-4);
-    box-shadow: var(--shadow-card);
-    color: var(--color-text);
-    transition: box-shadow 0.15s ease;
+    color: var(--color-on-shell-dim);
+    transition: border-color 0.15s ease, transform 0.15s ease;
   }
-  .cat-tiles a:hover { box-shadow: var(--shadow-card-hover); text-decoration: none; }
+  .cat-tiles a:hover { border-color: var(--color-sky); transform: translateY(-2px); text-decoration: none; }
   .cat-tiles__badge {
     flex: 0 0 auto;
     display: grid;
@@ -266,8 +313,8 @@ const ld = [
     width: 2.5rem;
     height: 2.5rem;
     border-radius: var(--radius-md);
-    background: var(--color-primary-tint);
-    color: var(--color-primary);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-sky);
     font-weight: 800;
     font-size: var(--font-size-sm);
   }
@@ -277,11 +324,11 @@ const ld = [
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--color-primary);
+    color: var(--color-coral);
   }
-  .cat-tiles__title { font-weight: 700; color: var(--color-ink); line-height: var(--line-tight); }
+  .cat-tiles__title { font-weight: 700; color: var(--color-on-shell); line-height: var(--line-tight); }
 
-  .methodology-teaser p { color: var(--color-text-muted); }
+  .methodology-teaser p { color: var(--color-text); }
   .methodology-teaser p + p { margin-top: var(--space-3); }
 
   @media (min-width: 900px) {

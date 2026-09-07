@@ -25,13 +25,14 @@ import { SITE } from '../data/site';
 </footer>
 <style>
   .site-footer {
-    border-top: 1px solid var(--color-border);
-    margin-top: var(--space-16);
+    border-top: 1px solid var(--color-shell-border);
     padding-block: var(--space-12);
-    background: var(--color-surface);
-    color: var(--color-text-muted);
+    background: var(--color-shell-2);
+    color: var(--color-on-shell-dim);
     font-size: var(--font-size-sm);
   }
+  .site-footer a { color: var(--color-on-shell-dim); }
+  .site-footer a:hover { color: var(--color-on-shell); }
   .footer-top {
     display: flex;
     flex-wrap: wrap;
@@ -57,7 +58,7 @@ import { SITE } from '../data/site';
     line-height: var(--line-base);
     margin-top: var(--space-8);
     padding-top: var(--space-4);
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-shell-border);
   }
   .copy { margin-top: var(--space-4); font-size: var(--font-size-xs); }
 </style>

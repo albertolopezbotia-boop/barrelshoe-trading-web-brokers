@@ -31,12 +31,25 @@
   --color-rating-bg: #fdf3d6;
   --color-rating-border: #f0d99a;
 
-  /* dark hero band (home) */
-  --color-hero: #04011c;
-  --color-hero-2: #231c54;
-  --color-hero-hl: #b9a3ff;
-  --color-on-hero: #f2f0fa;
-  --color-on-hero-dim: #918cb8;
+  /* ---- dark shell (barrelshoe.com) ---- */
+  --color-shell: #04011c;            /* page background */
+  --color-shell-2: #0a0526;          /* alternate section band */
+  --color-shell-raised: #17123a;     /* dark glass card / indigo panel */
+  --color-shell-border: #2b2455;
+  --color-on-shell: #ffffff;         /* headings on the shell */
+  --color-on-shell-dim: #9d97bd;     /* body text on the shell */
+
+  /* bull vs bear — the logo colours, used as a gradient */
+  --color-coral: #ff6b6b;
+  --color-sky: #5ec7ff;
+  --grad-brand: linear-gradient(90deg, #ff6b6b 0%, #5ec7ff 100%);
+
+  /* hero band aliases (kept for existing component CSS) */
+  --color-hero: var(--color-shell);
+  --color-hero-2: var(--color-shell-2);
+  --color-hero-hl: var(--color-sky);
+  --color-on-hero: var(--color-on-shell);
+  --color-on-hero-dim: var(--color-on-shell-dim);
   --header-h: 3.5rem;
 
   /* ---- legacy aliases (kept so existing component CSS keeps working) ---- */
