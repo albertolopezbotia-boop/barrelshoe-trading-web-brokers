@@ -8,9 +8,15 @@ interface Props {
   entries: BrokerEntry[];
   caption?: string;
   showFilters?: boolean;
+  showRank?: boolean;
 }
 
-const { entries, caption, showFilters = false } = Astro.props;
+const { entries, caption, showFilters = false, showRank = true } = Astro.props;
+
+const ratingFmt = new Intl.NumberFormat('es-ES', {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
 
 const rows = sortRows(entries.map(toRow), 'rank', 'asc');
 
@@ -81,7 +87,7 @@ const columns: { key: string; label: string; sort?: string }[] = [
       </thead>
       <tbody>
         {
-          rows.map((r) => (
+          rows.map((r, i) => (
             <tr
               data-slug={r.slug}
               data-rating={r.rating}
@@ -91,17 +97,22 @@ const columns: { key: string; label: string; sort?: string }[] = [
               data-platforms={r.platforms.join('|')}
               data-regulators={r.regulators.join('|')}
             >
-              <td data-label="#">{r.rank}</td>
+              <td data-label="#">{showRank ? r.rank : i + 1}</td>
               <td data-label="Broker">
                 <a href={r.href}>{r.name}</a>
               </td>
-              <td data-label="Valoración">{r.rating.toFixed(1)}</td>
+              <td data-label="Valoración">{ratingFmt.format(r.rating)}</td>
               <td data-label="Depósito mínimo">{money({ amount: r.minDeposit, currency: 'USD' })}</td>
               <td data-label="Spread EUR/USD">{pips(r.spread)}</td>
               <td data-label="Plataformas">{r.platforms.join(', ')}</td>
               <td data-label="Reguladores">{r.regulators.join(', ')}</td>
               <td data-label="Cuenta">
-                <AffiliateButton href={r.affiliateUrl} broker={r.name} label="Abrir cuenta" />
+                <AffiliateButton
+                  href={r.affiliateUrl}
+                  broker={r.name}
+                  label="Abrir cuenta"
+                  ariaLabel={`Abrir cuenta en ${r.name}`}
+                />
               </td>
             </tr>
           ))
@@ -273,6 +284,9 @@ const columns: { key: string; label: string; sort?: string }[] = [
     td {
       display: block;
       width: 100%;
+    }
+    tbody tr[hidden] {
+      display: none;
     }
     tbody tr {
       border: 1px solid var(--color-border);

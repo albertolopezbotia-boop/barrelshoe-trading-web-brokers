@@ -3,10 +3,17 @@ interface Props {
   href: string;
   broker: string;
   label?: string;
+  ariaLabel?: string;
 }
-const { href, broker, label } = Astro.props;
+const { href, broker, label, ariaLabel } = Astro.props;
 ---
-<a class="aff-btn" href={href} target="_blank" rel="sponsored nofollow noopener">
+<a
+  class="aff-btn"
+  href={href}
+  target="_blank"
+  rel="sponsored nofollow noopener"
+  aria-label={ariaLabel}
+>
   {label ?? `Abrir cuenta en ${broker}`}
 </a>
 <style>
