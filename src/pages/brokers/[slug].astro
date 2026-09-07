@@ -33,6 +33,19 @@ interface Props {
 const { entry, entries } = Astro.props;
 const d = entry.data;
 
+const dateFmt = new Intl.DateTimeFormat('es-ES', { dateStyle: 'long' });
+const scoreFmt = new Intl.NumberFormat('es-ES', {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
+const ratingRows: Array<{ label: string; value: number }> = [
+  { label: 'Costes', value: d.ratingBreakdown.fees },
+  { label: 'Plataformas', value: d.ratingBreakdown.platforms },
+  { label: 'Depósitos y retiros', value: d.ratingBreakdown.deposits },
+  { label: 'Atención al cliente', value: d.ratingBreakdown.support },
+  { label: 'Regulación', value: d.ratingBreakdown.regulation },
+];
+
 if (import.meta.env.DEV && Math.abs(aggregateRating(d.ratingBreakdown) - d.rating) > 0.15) {
   throw new Error(
     `${entry.slug}: rating ${d.rating} no coincide con el desglose (${aggregateRating(d.ratingBreakdown)})`,
@@ -60,7 +73,7 @@ const ld = [
   title={`${d.name}: análisis y opiniones 2026 | ${SITE.name}`}
   description={d.bottomLine}
   canonicalPath={`/brokers/${entry.slug}/`}
-  ogImage={`/og/${entry.slug}.png`}
+  ogType="article"
   jsonLd={ld}
 >
   <div class="container broker-review">
@@ -71,19 +84,54 @@ const ld = [
       <h1>{d.name}: análisis, spreads y opiniones</h1>
       <RatingStars value={d.rating} showNumber />
       <p class="bottom-line">{d.bottomLine}</p>
+      <p class="broker-updated">Datos revisados el {dateFmt.format(d.lastUpdated)}</p>
       <AffiliateButton href={d.affiliateUrl} broker={d.name} />
       <Disclosure variant="inline" />
     </header>
 
-    <FactSheet broker={d} />
+    <section class="review-block">
+      <h2>Datos clave</h2>
+      <FactSheet broker={d} />
+    </section>
+
     <ProsCons pros={d.pros} cons={d.cons} />
+
+    <section class="review-block rating-breakdown">
+      <h2>Desglose de la valoración</h2>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Área</th>
+            <th scope="col">Nota</th>
+            <th scope="col">Valoración</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ratingRows.map((row) => (
+            <tr>
+              <th scope="row">{row.label}</th>
+              <td>{scoreFmt.format(row.value)} / 5</td>
+              <td><RatingStars value={row.value} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
 
     <section class="review-body">
       <Content />
     </section>
 
-    <CompanyProfile broker={d} />
-    <RegulationTable regulators={d.regulators} />
+    <section class="review-block">
+      <h2>Perfil de empresa</h2>
+      <CompanyProfile broker={d} />
+    </section>
+
+    <section class="review-block">
+      <h2>Regulación</h2>
+      <RegulationTable regulators={d.regulators} />
+    </section>
+
     <Faq items={d.faq} />
 
     <section class="related">
@@ -112,6 +160,34 @@ const ld = [
   .broker-head .bottom-line {
     margin: 0;
     max-width: 65ch;
+    color: var(--color-text-muted);
+  }
+  .broker-head .broker-updated {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+  .review-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .review-block h2 {
+    margin: 0;
+  }
+  .rating-breakdown table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+  .rating-breakdown th,
+  .rating-breakdown td {
+    text-align: left;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+  }
+  .rating-breakdown thead th {
     color: var(--color-text-muted);
   }
   .review-body :global(h2) {

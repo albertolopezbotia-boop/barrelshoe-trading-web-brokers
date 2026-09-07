@@ -4,16 +4,17 @@ interface Props {
   description: string;
   canonical: string;
   ogImage: string;
+  ogType?: string;
   noindex?: boolean;
   jsonLd?: object[];
 }
-const { title, description, canonical, ogImage, noindex = false, jsonLd = [] } = Astro.props;
+const { title, description, canonical, ogImage, ogType = 'website', noindex = false, jsonLd = [] } = Astro.props;
 ---
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta property="og:site_name" content="Barrelshoe Trading" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
