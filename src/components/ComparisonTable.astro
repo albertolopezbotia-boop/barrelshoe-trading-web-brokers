@@ -1,7 +1,7 @@
 ---
 import type { BrokerEntry } from '../lib/brokers';
 import { toRow, sortRows } from '../lib/table';
-import { money } from '../lib/format';
+import { money, pips, yesNo } from '../lib/format';
 import AffiliateButton from './AffiliateButton.astro';
 
 interface Props {
@@ -17,8 +17,8 @@ const ratingFmt = new Intl.NumberFormat('es-ES', {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
-
-const rows = sortRows(entries.map(toRow), 'rank', 'asc');
+const score10 = (r: number) => ratingFmt.format(Math.round(r * 2 * 10) / 10);
+const stars = (r: number) => '★'.repeat(Math.round(r)) + '☆'.repeat(5 - Math.round(r));
 
 const monogram = (name: string) =>
   name
@@ -29,103 +29,134 @@ const monogram = (name: string) =>
     .map((w) => w[0]!.toUpperCase())
     .join('');
 
-const starString = (value: number) => '★'.repeat(Math.round(value));
+const rows = sortRows(entries.map(toRow), 'rank', 'asc');
 
+const instrumentFilters = [
+  { key: 'forex', label: 'Forex' },
+  { key: 'stocks', label: 'Acciones' },
+  { key: 'etfs', label: 'ETFs' },
+  { key: 'gold', label: 'Oro' },
+  { key: 'indices', label: 'Índices' },
+  { key: 'commodities', label: 'Materias primas' },
+  { key: 'crypto', label: 'Cripto' },
+];
 const platformOptions = [...new Set(rows.flatMap((r) => r.platforms))].sort((a, b) =>
   a.localeCompare(b, 'es'),
 );
 const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a, b) =>
   a.localeCompare(b, 'es'),
 );
-
-const columns: { key: string; label: string; sort?: string }[] = [
-  { key: 'rank', label: '#', sort: 'rank' },
-  { key: 'name', label: 'Broker' },
-  { key: 'rating', label: 'Valoración', sort: 'rating' },
-  { key: 'minDeposit', label: 'Depósito mínimo', sort: 'minDeposit' },
-  { key: 'cta', label: 'Cuenta' },
-];
 ---
 
 <div class="comparison" data-comparison>
-  {
-    showFilters && (
-      <div class="comparison__filters">
-        <label>
-          <span>Plataforma</span>
-          <select data-filter="platform">
-            <option value="">Todas las plataformas</option>
-            {platformOptions.map((p) => (
-              <option value={p}>{p}</option>
-            ))}
-          </select>
+  {showFilters && (
+    <div class="filters" data-filters>
+      <div class="filters__bar">
+        <label class="filters__search">
+          <span class="visually-hidden">Filtrar por nombre del broker</span>
+          <input type="search" data-filter="name" placeholder="Filtrar por nombre del broker" />
         </label>
-        <label>
-          <span>Regulador</span>
-          <select data-filter="regulator">
-            <option value="">Todos los reguladores</option>
-            {regulatorOptions.map((r) => (
-              <option value={r}>{r}</option>
-            ))}
-          </select>
-        </label>
+        <button type="button" class="filters__toggle" data-adv-toggle aria-expanded="false">
+          Filtros
+        </button>
       </div>
-    )
-  }
+      <div class="filters__adv" data-adv hidden>
+        <fieldset class="filters__instr">
+          <legend>Instrumentos</legend>
+          {instrumentFilters.map((i) => (
+            <label>
+              <input type="checkbox" data-filter="instrument" value={i.key} /> {i.label}
+            </label>
+          ))}
+        </fieldset>
+        <div class="filters__selects">
+          <label>
+            <span>Plataforma</span>
+            <select data-filter="platform">
+              <option value="">Todas</option>
+              {platformOptions.map((p) => <option value={p}>{p}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Regulador</span>
+            <select data-filter="regulator">
+              <option value="">Todos</option>
+              {regulatorOptions.map((r) => <option value={r}>{r}</option>)}
+            </select>
+          </label>
+        </div>
+      </div>
+      <p class="filters__empty" data-empty hidden>Ningún broker coincide con esos filtros.</p>
+    </div>
+  )}
 
   <div class="comparison__scroll">
     <table data-comparison-table>
       {caption && <caption>{caption}</caption>}
       <thead>
         <tr>
-          {
-            columns.map((c) => (
-              <th scope="col" class={`th-${c.key}`}>
-                {c.sort ? (
-                  <button type="button" data-sort={c.sort}>
-                    {c.label}
-                  </button>
-                ) : (
-                  c.label
-                )}
-              </th>
-            ))
-          }
+          <th scope="col" class="th-broker">
+            <button type="button" data-sort="rank">Broker</button>
+          </th>
+          <th scope="col">Regulación</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Apal. máx.</th>
+          <th scope="col"><button type="button" data-sort="minDeposit">Depósito mín.</button></th>
+          <th scope="col">Comisión</th>
+          <th scope="col"><button type="button" data-sort="rating">Nota</button></th>
+          <th scope="col"><span class="visually-hidden">Cuenta</span></th>
+          <th scope="col"><span class="visually-hidden">Detalles</span></th>
         </tr>
       </thead>
       <tbody>
-        {
-          rows.map((r, i) => (
+        {rows.map((r, i) => (
+          <>
             <tr
-              class={showRank && r.rank === 1 ? 'is-top' : undefined}
+              class:list={['brow', { 'is-top': showRank && r.rank === 1 }]}
               data-slug={r.slug}
+              data-name={r.name}
               data-rating={r.rating}
               data-rank={r.rank}
               data-min-deposit={r.minDeposit}
               data-spread={r.spread}
               data-platforms={r.platforms.join('|')}
+              data-brokertype={r.brokerType.join('|')}
               data-regulators={r.regulators.join('|')}
+              data-instruments={r.instruments.join('|')}
             >
-              <td data-label="#" class="cell-rank">
-                <span class="rank-badge">{showRank ? r.rank : i + 1}</span>
-              </td>
               <td data-label="Broker" class="cell-broker">
-                <a href={r.href} class="broker-id">
-                  <span class="broker-monogram" aria-hidden="true">{monogram(r.name)}</span>
-                  <span class="broker-text">
-                    <span class="broker-name">{r.name}</span>
-                    <span class="broker-meta">
-                      {r.platforms.join(' · ')} &nbsp;|&nbsp; {r.regulators.slice(0, 3).join(' · ')}
+                {showRank && <span class="rk">{r.rank}</span>}
+                {!showRank && <span class="rk">{i + 1}</span>}
+                <a href={r.href} class="bk">
+                  <span class="bk__mono" aria-hidden="true">{monogram(r.name)}</span>
+                  <span class="bk__text">
+                    <span class="bk__name">
+                      {r.name}
+                      {showRank && r.rank === 1 && <span class="bk__pick">Nuestra elección</span>}
+                    </span>
+                    <span class="bk__rate">
+                      <span class="bk__stars" aria-hidden="true">{stars(r.rating)}</span>
+                      <span class="bk__review">Ver análisis ›</span>
                     </span>
                   </span>
                 </a>
               </td>
-              <td data-label="Valoración" class="cell-rating">
-                <span class="score-pill">{ratingFmt.format(r.rating)}</span>
-                <span class="mini-stars" aria-hidden="true">{starString(r.rating)}</span>
+              <td data-label="Regulación" class="cell-reg">
+                {r.regulatorTags.slice(0, 4).map((t) => <span class="tag">{t}</span>)}
+                {r.regulatorTags.length > 4 && (
+                  <span class="tag tag--more">+{r.regulatorTags.length - 4}</span>
+                )}
               </td>
-              <td data-label="Depósito mínimo" class="cell-deposit">
-                {money({ amount: r.minDeposit, currency: 'USD' })}
+              <td data-label="Tipo" class="cell-type">
+                {r.brokerType.map((t) => <span class="tag tag--type">{t}</span>)}
+              </td>
+              <td data-label="Apal. máx." class="cell-lev">{r.leverageMax}</td>
+              <td data-label="Depósito mín." class="cell-dep">
+                {money({ amount: r.minDeposit, currency: r.minDepositCurrency })}
+              </td>
+              <td data-label="Comisión" class="cell-comm">{r.commission}</td>
+              <td data-label="Nota" class="cell-score">
+                <span class="score">{score10(r.rating)}<small>/10</small></span>
               </td>
               <td data-label="Cuenta" class="cell-cta">
                 <AffiliateButton
@@ -135,9 +166,32 @@ const columns: { key: string; label: string; sort?: string }[] = [
                   ariaLabel={`Abrir cuenta en ${r.name}`}
                 />
               </td>
+              <td class="cell-exp">
+                <button
+                  type="button"
+                  class="exp-btn"
+                  data-expand={r.slug}
+                  aria-expanded="false"
+                  aria-label={`Más detalles de ${r.name}`}
+                >
+                  <span class="exp-btn__chev" aria-hidden="true"></span>
+                </button>
+              </td>
             </tr>
-          ))
-        }
+            <tr class="drow" data-detail={r.slug} hidden>
+              <td colspan="9">
+                <dl class="detail">
+                  <div><dt>Spread EUR/USD desde</dt><dd>{pips(r.spread)}</dd></div>
+                  <div><dt>Plataformas</dt><dd>{r.platforms.join(' · ')}</dd></div>
+                  <div><dt>Instrumentos</dt><dd>{r.instruments.length} clases de activo</dd></div>
+                  <div><dt>Cuenta sin swap</dt><dd>{yesNo(r.swapFree)}</dd></div>
+                  <div><dt>Tiempo de retirada</dt><dd>{r.withdrawalTime}</dd></div>
+                  <div><dt></dt><dd><a href={r.href}>Ver análisis completo ›</a></dd></div>
+                </dl>
+              </td>
+            </tr>
+          </>
+        ))}
       </tbody>
     </table>
   </div>
@@ -146,41 +200,76 @@ const columns: { key: string; label: string; sort?: string }[] = [
 <script>
   import { sortRows, filterRows, type Row, type SortKey } from '../lib/table';
 
-  const table = document.querySelector<HTMLTableElement>('[data-comparison-table]');
-  if (table) {
+  const root = document.querySelector<HTMLElement>('[data-comparison]');
+  const table = root?.querySelector<HTMLTableElement>('[data-comparison-table]');
+  if (root && table) {
     const tbody = table.querySelector('tbody')!;
+    const brows = [...tbody.querySelectorAll<HTMLTableRowElement>('tr.brow')];
+    const detailOf = new Map<string, HTMLTableRowElement>();
+    tbody.querySelectorAll<HTMLTableRowElement>('tr.drow').forEach((tr) =>
+      detailOf.set(tr.dataset.detail!, tr),
+    );
+
     const readRows = (): Row[] =>
-      [...tbody.querySelectorAll<HTMLTableRowElement>('tr')].map((tr) => ({
+      brows.map((tr) => ({
         slug: tr.dataset.slug!,
-        name: '',
-        logo: '',
+        name: tr.dataset.name ?? '',
         href: '',
         affiliateUrl: '',
         rating: Number(tr.dataset.rating),
         rank: Number(tr.dataset.rank),
         minDeposit: Number(tr.dataset.minDeposit),
+        minDepositCurrency: 'USD',
         spread: Number(tr.dataset.spread),
-        platforms: tr.dataset.platforms!.split('|'),
-        regulators: tr.dataset.regulators!.split('|'),
+        leverageMax: '',
+        commission: '',
+        swapFree: false,
+        withdrawalTime: '',
+        platforms: (tr.dataset.platforms ?? '').split('|').filter(Boolean),
+        brokerType: (tr.dataset.brokertype ?? '').split('|').filter(Boolean),
+        regulators: (tr.dataset.regulators ?? '').split('|').filter(Boolean),
+        regulatorTags: [],
+        instruments: (tr.dataset.instruments ?? '').split('|').filter(Boolean),
       }));
-    const rowEls = new Map(
-      [...tbody.querySelectorAll<HTMLTableRowElement>('tr')].map((tr) => [tr.dataset.slug!, tr]),
-    );
-    const state = { key: 'rank' as SortKey, dir: 'asc' as 'asc' | 'desc', platform: '', regulator: '' };
+
+    const state = {
+      key: 'rank' as SortKey,
+      dir: 'asc' as 'asc' | 'desc',
+      name: '',
+      platform: '',
+      regulator: '',
+      instruments: [] as string[],
+    };
+
+    const emptyMsg = root.querySelector<HTMLElement>('[data-empty]');
 
     const render = () => {
-      let rows = filterRows(readRows(), {
+      let list = filterRows(readRows(), {
+        name: state.name || undefined,
         platform: state.platform || undefined,
         regulator: state.regulator || undefined,
+        instruments: state.instruments,
       });
-      rows = sortRows(rows, state.key, state.dir);
-      const visible = new Set(rows.map((r) => r.slug));
-      [...rowEls.values()].forEach((tr) => (tr.hidden = !visible.has(tr.dataset.slug!)));
-      rows.forEach((r) => tbody.appendChild(rowEls.get(r.slug)!));
+      list = sortRows(list, state.key, state.dir);
+      const visible = new Set(list.map((r) => r.slug));
+      brows.forEach((tr) => {
+        const show = visible.has(tr.dataset.slug!);
+        tr.hidden = !show;
+        const d = detailOf.get(tr.dataset.slug!);
+        if (d && !show) {
+          d.hidden = true;
+          tr.querySelector('[data-expand]')?.setAttribute('aria-expanded', 'false');
+        }
+      });
+      list.forEach((r) => {
+        tbody.appendChild(brows.find((tr) => tr.dataset.slug === r.slug)!);
+        tbody.appendChild(detailOf.get(r.slug)!);
+      });
+      if (emptyMsg) emptyMsg.hidden = list.length > 0;
       table.querySelectorAll<HTMLButtonElement>('th button[data-sort]').forEach((btn) => {
         const active = btn.dataset.sort === state.key;
         btn.setAttribute('aria-sort', active ? (state.dir === 'asc' ? 'ascending' : 'descending') : 'none');
-        btn.dataset.active = active ? String(true) : '';
+        btn.dataset.active = active ? 'true' : '';
       });
     };
 
@@ -192,33 +281,101 @@ const columns: { key: string; label: string; sort?: string }[] = [
         render();
       });
     });
-    document
-      .querySelector<HTMLSelectElement>('[data-filter="platform"]')
-      ?.addEventListener('change', (e) => {
-        state.platform = (e.target as HTMLSelectElement).value;
+
+    tbody.querySelectorAll<HTMLButtonElement>('[data-expand]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const d = detailOf.get(btn.dataset.expand!);
+        if (!d) return;
+        const open = d.hidden;
+        d.hidden = !open;
+        btn.setAttribute('aria-expanded', String(open));
+      });
+    });
+
+    root.querySelector<HTMLInputElement>('[data-filter="name"]')?.addEventListener('input', (e) => {
+      state.name = (e.target as HTMLInputElement).value;
+      render();
+    });
+    root.querySelector<HTMLSelectElement>('[data-filter="platform"]')?.addEventListener('change', (e) => {
+      state.platform = (e.target as HTMLSelectElement).value;
+      render();
+    });
+    root.querySelector<HTMLSelectElement>('[data-filter="regulator"]')?.addEventListener('change', (e) => {
+      state.regulator = (e.target as HTMLSelectElement).value;
+      render();
+    });
+    root.querySelectorAll<HTMLInputElement>('[data-filter="instrument"]').forEach((cb) => {
+      cb.addEventListener('change', () => {
+        state.instruments = [
+          ...root.querySelectorAll<HTMLInputElement>('[data-filter="instrument"]:checked'),
+        ].map((x) => x.value);
         render();
       });
-    document
-      .querySelector<HTMLSelectElement>('[data-filter="regulator"]')
-      ?.addEventListener('change', (e) => {
-        state.regulator = (e.target as HTMLSelectElement).value;
-        render();
-      });
+    });
+    const advToggle = root.querySelector<HTMLButtonElement>('[data-adv-toggle]');
+    const adv = root.querySelector<HTMLElement>('[data-adv]');
+    advToggle?.addEventListener('click', () => {
+      const open = adv?.hidden;
+      if (adv) adv.hidden = !open;
+      advToggle.setAttribute('aria-expanded', String(open));
+    });
   }
 </script>
 
 <style>
-  .comparison {
+  .comparison { display: flex; flex-direction: column; gap: var(--space-4); }
+
+  .filters {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-raised);
+    padding: var(--space-4);
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-3);
   }
-  .comparison__filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
+  .filters__bar { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .filters__search { flex: 1 1 16rem; }
+  .filters__search input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font: inherit;
   }
-  .comparison__filters label {
+  .filters__toggle {
+    font: inherit;
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+  .filters__toggle[aria-expanded='true'] { background: var(--color-primary-tint); border-color: var(--color-primary); color: var(--color-primary); }
+  .filters__adv { display: grid; gap: var(--space-4); padding-top: var(--space-1); }
+  .filters__instr { border: 0; padding: 0; margin: 0; }
+  .filters__instr legend {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+  .filters__instr label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-right: var(--space-4);
+    font-size: var(--font-size-sm);
+  }
+  .filters__selects { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+  .filters__selects label {
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
@@ -228,48 +385,34 @@ const columns: { key: string; label: string; sort?: string }[] = [
     letter-spacing: 0.03em;
     color: var(--color-text-muted);
   }
-  .comparison__filters select {
+  .filters__selects select {
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-md);
-    background: var(--color-surface-raised);
+    background: var(--color-bg);
     color: var(--color-text);
     font: inherit;
     text-transform: none;
     letter-spacing: normal;
     font-weight: 400;
   }
-  .comparison__scroll {
-    overflow-x: auto;
-  }
+  .filters__empty { margin: 0; font-size: var(--font-size-sm); color: var(--color-text-muted); }
 
-  table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 var(--space-2);
-    font-size: var(--font-size-sm);
-  }
-  caption {
-    caption-side: top;
-    text-align: left;
-    color: var(--color-text-muted);
-    padding-bottom: var(--space-2);
-  }
+  .comparison__scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); }
+  caption { caption-side: top; text-align: left; color: var(--color-text-muted); padding-bottom: var(--space-2); }
 
   thead th {
     text-align: left;
-    padding: 0 var(--space-4) var(--space-1);
-    color: var(--color-text-muted);
+    padding: var(--space-2) var(--space-3);
     font-size: var(--font-size-xs);
-    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    font-weight: 700;
     white-space: nowrap;
+    border-bottom: 1px solid var(--color-border);
   }
-  .th-rank { width: 3rem; }
-  .th-rating { width: 8.5rem; }
-  .th-minDeposit { width: 9rem; }
-  .th-cta { width: 10rem; }
   thead button {
     display: inline-flex;
     align-items: center;
@@ -283,58 +426,33 @@ const columns: { key: string; label: string; sort?: string }[] = [
     color: inherit;
     cursor: pointer;
   }
-  thead button::after { content: "\2195"; opacity: 0.35; }
-  thead button[aria-sort="ascending"]::after { content: "\2191"; opacity: 1; }
-  thead button[aria-sort="descending"]::after { content: "\2193"; opacity: 1; }
-  thead button[data-active="true"] { color: var(--color-ink); }
+  thead button::after { content: '\2195'; opacity: 0.35; }
+  thead button[aria-sort='ascending']::after { content: '\2191'; opacity: 1; }
+  thead button[aria-sort='descending']::after { content: '\2193'; opacity: 1; }
+  thead button[data-active='true'] { color: var(--color-ink); }
 
-  tbody tr {
-    background: var(--color-surface-raised);
-    box-shadow: var(--shadow-card);
-    transition: box-shadow 0.15s ease;
-  }
-  tbody tr:hover { box-shadow: var(--shadow-card-hover); }
-  tbody tr.is-top { box-shadow: var(--shadow-feature); }
-
-  tbody td {
-    padding: var(--space-3) var(--space-4);
-    border-top: 1px solid var(--color-border);
+  tbody .brow td {
+    padding: var(--space-3);
     border-bottom: 1px solid var(--color-border);
     vertical-align: middle;
   }
-  tbody td:first-child {
-    border-left: 1px solid var(--color-border);
-    border-radius: var(--radius-md) 0 0 var(--radius-md);
-  }
-  tbody td:last-child {
-    border-right: 1px solid var(--color-border);
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  }
-  tbody tr.is-top td { border-color: transparent; }
+  tbody .brow.is-top { background: var(--color-primary-tint); }
+  tbody .brow:hover { background: var(--color-surface); }
+  tbody .brow.is-top:hover { background: var(--color-primary-tint); }
 
-  .rank-badge {
-    display: grid;
-    place-items: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 50%;
-    background: var(--color-surface);
-    color: var(--color-text-muted);
+  .cell-broker { display: flex; align-items: center; gap: var(--space-3); min-width: 15rem; }
+  .rk {
+    flex: 0 0 auto;
+    width: 1.5rem;
+    text-align: center;
     font-weight: 800;
-    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
   }
-  tr.is-top .rank-badge { background: var(--color-primary); color: var(--color-text-inverse); }
-
-  .broker-id {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    min-width: 0;
-    color: inherit;
-  }
-  .broker-id:hover { text-decoration: none; }
-  .broker-id:hover .broker-name { text-decoration: underline; }
-  .broker-monogram {
+  .bk { display: flex; align-items: center; gap: var(--space-3); color: inherit; min-width: 0; }
+  .bk:hover { text-decoration: none; }
+  .bk:hover .bk__name { text-decoration: underline; }
+  .bk__mono {
     flex: 0 0 auto;
     display: grid;
     place-items: center;
@@ -345,80 +463,96 @@ const columns: { key: string; label: string; sort?: string }[] = [
     color: var(--color-text-inverse);
     font-weight: 800;
     font-size: var(--font-size-xs);
-    letter-spacing: 0.02em;
   }
-  .broker-text { min-width: 0; }
-  .broker-name {
-    display: block;
+  .bk__name { display: block; font-weight: 700; color: var(--color-ink); }
+  .bk__pick {
+    display: inline-block;
+    margin-left: var(--space-2);
+    font-size: 10px;
     font-weight: 700;
-    font-size: var(--font-size-base);
-    color: var(--color-ink);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--color-primary);
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-pill);
+    padding: 1px 6px;
   }
-  .broker-meta {
-    display: block;
-    font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  .bk__rate { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-xs); }
+  .bk__stars { color: var(--color-rating); letter-spacing: 1px; }
+  .bk__review { color: var(--color-primary); font-weight: 600; }
 
-  .cell-rating {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    white-space: nowrap;
+  .cell-reg { max-width: 15rem; }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--color-text-muted);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 1px 6px;
+    margin: 1px 2px 1px 0;
   }
-  .score-pill {
+  .tag--type { color: var(--color-text); font-weight: 600; }
+  .tag--more { font-weight: 700; }
+  .cell-lev, .cell-dep, .cell-comm { white-space: nowrap; font-weight: 600; color: var(--color-ink); }
+  .score {
     font-weight: 800;
-    font-size: var(--font-size-sm);
     color: var(--color-ink);
     background: var(--color-rating-bg);
     border: 1px solid var(--color-rating-border);
     border-radius: var(--radius-md);
     padding: 2px 8px;
+    white-space: nowrap;
   }
-  .mini-stars { color: var(--color-rating); font-size: var(--font-size-xs); letter-spacing: 1px; }
+  .score small { color: var(--color-text-muted); font-weight: 600; }
 
-  .cell-deposit { font-weight: 700; color: var(--color-ink); white-space: nowrap; }
+  .exp-btn {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    width: 1.75rem;
+    height: 1.75rem;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .exp-btn__chev {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid var(--color-text-muted);
+    border-bottom: 2px solid var(--color-text-muted);
+    transform: rotate(45deg) translate(-1px, -1px);
+    transition: transform 0.15s ease;
+  }
+  .exp-btn[aria-expanded='true'] .exp-btn__chev { transform: rotate(-135deg); }
 
-  @media (max-width: 720px) {
-    table { border-spacing: 0; }
-    thead {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip: rect(0 0 0 0);
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-    table,
-    tbody,
-    tr,
-    td {
-      display: block;
-      width: 100%;
-    }
-    tbody tr[hidden] { display: none; }
-    tbody tr {
+  .drow td { padding: 0; border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+  .detail {
+    margin: 0;
+    padding: var(--space-4) var(--space-6);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: var(--space-2) var(--space-8);
+  }
+  .detail div { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--font-size-sm); }
+  .detail dt { color: var(--color-text-muted); }
+  .detail dd { margin: 0; font-weight: 600; color: var(--color-ink); text-align: right; }
+
+  @media (max-width: 860px) {
+    thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); }
+    table, tbody, .brow, .drow, .brow td, .drow td { display: block; width: 100%; }
+    .brow {
       border: 1px solid var(--color-border);
       border-radius: var(--radius-lg);
-      margin-bottom: var(--space-4);
+      box-shadow: var(--shadow-card);
+      margin-bottom: var(--space-3);
       padding: var(--space-4);
+      background: var(--color-surface-raised);
     }
-    tbody td {
-      border: 0;
-      border-radius: 0;
-      padding: var(--space-2) 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: var(--space-4);
-    }
-    tbody td:first-child,
-    tbody td:last-child { border-radius: 0; }
-    tbody td::before {
+    .brow.is-top { box-shadow: var(--shadow-feature); }
+    .brow td { border: 0; padding: var(--space-2) 0; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
+    .brow td::before {
       content: attr(data-label);
       font-size: var(--font-size-xs);
       font-weight: 700;
@@ -426,11 +560,12 @@ const columns: { key: string; label: string; sort?: string }[] = [
       letter-spacing: 0.04em;
       color: var(--color-text-muted);
     }
-    .cell-broker::before,
-    .cell-cta::before { display: none; }
-    .cell-broker { padding-top: 0; }
-    .broker-meta { white-space: normal; }
-    .cell-cta { padding-bottom: 0; }
-    .cell-cta :global(.aff-btn) { width: 100%; }
+    .cell-broker, .cell-cta, .cell-exp { display: block; }
+    .cell-broker::before, .cell-cta::before, .cell-exp::before { display: none; }
+    .cell-cta :global(.aff-btn) { width: 100%; margin-top: var(--space-2); }
+    .cell-reg, .cell-type { flex-wrap: wrap; justify-content: flex-start; }
+    .cell-exp { text-align: center; padding-top: var(--space-2); }
+    .drow td { padding: 0; }
+    .detail { padding: var(--space-3) 0 0; grid-template-columns: 1fr; }
   }
 </style>

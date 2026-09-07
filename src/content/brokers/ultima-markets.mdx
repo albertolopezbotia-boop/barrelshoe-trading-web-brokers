@@ -22,6 +22,7 @@ accountTypes:
   - { name: "ECN", spreadFrom: 0.0, commission: "Desde 3 USD por lado (unos 6 USD por lote ida y vuelta)", minDeposit: { amount: 500, currency: "USD" } }
   - { name: "Pro ECN", spreadFrom: 0.0, commission: "Comisión reducida por lote para grandes volúmenes; depósito elevado", minDeposit: { amount: 20000, currency: "USD" } }
 platforms: ["MT4", "MT5", "propia"]
+brokerType: ["ECN", "STP"]
 instruments: { forex: true, indices: true, commodities: true, gold: true, stocks: true, crypto: true, etfs: true }
 leverageMax: "1:30 en la entidad de la UE; hasta 1:2000 en la entidad de Mauricio"
 copyTrading: true

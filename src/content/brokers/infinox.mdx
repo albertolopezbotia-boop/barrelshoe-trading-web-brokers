@@ -22,6 +22,7 @@ accountTypes:
   - { name: "STP", spreadFrom: 0.8, commission: "Sin comisión", minDeposit: { amount: 50, currency: "USD" } }
   - { name: "ECN", spreadFrom: 0.0, commission: "Desde 6 USD por lote (ida y vuelta)", minDeposit: { amount: 50, currency: "USD" } }
 platforms: ["MT4", "MT5", "WebTrader", "movil", "propia"]
+brokerType: ["STP", "NDD"]
 instruments: { forex: true, indices: true, commodities: true, gold: true, stocks: true, crypto: true, etfs: false }
 leverageMax: "1:500"
 copyTrading: true

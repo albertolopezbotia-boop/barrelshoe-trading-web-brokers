@@ -25,6 +25,7 @@ accountTypes:
   - { name: "Zero", spreadFrom: 0.0, commission: "Comisión por lote variable según instrumento, desde unos 0,05 USD por lado", minDeposit: { amount: 200, currency: "USD" } }
   - { name: "Pro", spreadFrom: 0.1, commission: "Sin comisión (ejecución instantánea)", minDeposit: { amount: 200, currency: "USD" } }
 platforms: ["MT4", "MT5", "propia"]
+brokerType: ["STP", "ECN"]
 instruments: { forex: true, indices: true, commodities: true, gold: true, stocks: true, crypto: true, etfs: false }
 leverageMax: "1:30 en la entidad UE (solo profesionales); hasta ilimitado en la entidad de Seychelles"
 copyTrading: true

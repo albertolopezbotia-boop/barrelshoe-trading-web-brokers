@@ -23,6 +23,7 @@ accountTypes:
   - { name: "Raw", spreadFrom: 0.1, commission: "Desde 3 USD por lado (6 USD ida y vuelta)", minDeposit: { amount: 100, currency: "USD" } }
   - { name: "Islámica (sin swap)", spreadFrom: 1.0, commission: "Sin swap; posible cargo administrativo por operación mantenida", minDeposit: { amount: 100, currency: "USD" } }
 platforms: ["MT4", "MT5", "cTrader"]
+brokerType: ["ECN", "STP", "NDD"]
 instruments: { forex: true, indices: true, commodities: true, gold: true, stocks: true, crypto: true, etfs: true }
 leverageMax: "1:500"
 copyTrading: true

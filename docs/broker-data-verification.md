@@ -502,7 +502,14 @@ independientemente de la columna.
   usan cadenas compuestas o `status` matizado; revisar la redacción en el
   FactSheet de cada ficha.
 - **Grafía "Limassol"**: `exness.mdx` usa "Limassol"; `xm.mdx` usa "Limasol".
-  Unificar.
+  Unificar. *(Corregido el 07/09/2026 — `xm.mdx` ahora usa "Limassol".)*
+- **`brokerType`** (nuevo campo, añadido el 07/09/2026 para la tabla comparativa):
+  el modelo de ejecución de un bróker rara vez se publica con precisión y varía
+  por tipo de cuenta. Valores usados, **todos a confirmar**: FP Markets / Vantage
+  / FP Trading / VT Markets / Hantec `[ECN, STP, NDD]`; Exness `[STP, ECN]`
+  (híbrido A-book/B-book según fuentes); Ultima `[ECN, STP]`; Infinox / PU Prime
+  `[STP, NDD]`; **XM `[Creador de mercado]`** (dealing desk confirmado por varias
+  fuentes; la cuenta Zero imita precios ECN pero sigue siendo market maker).
 
 ---
 

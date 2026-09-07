@@ -24,6 +24,7 @@ accountTypes:
   - { name: "Raw ECN", spreadFrom: 0.0, commission: "Desde 3 USD por lado (6 USD ida y vuelta)", minDeposit: { amount: 50, currency: "USD" } }
   - { name: "Pro ECN", spreadFrom: 0.0, commission: "Comisión reducida por lote para grandes volúmenes; depósito elevado", minDeposit: { amount: 20000, currency: "USD" } }
 platforms: ["MT4", "MT5", "propia"]
+brokerType: ["ECN", "STP", "NDD"]
 instruments: { forex: true, indices: true, commodities: true, gold: true, stocks: true, crypto: true, etfs: true }
 leverageMax: "1:500"
 copyTrading: true

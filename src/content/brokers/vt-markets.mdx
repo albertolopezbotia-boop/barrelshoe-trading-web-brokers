@@ -22,6 +22,7 @@ accountTypes:
   - { name: "Standard STP", spreadFrom: 1.2, commission: "Sin comisión", minDeposit: { amount: 100, currency: "USD" } }
   - { name: "Raw ECN", spreadFrom: 0.0, commission: "Desde 3 USD por lado (unos 6 USD por lote ida y vuelta)", minDeposit: { amount: 100, currency: "USD" } }
 platforms: ["MT4", "MT5", "propia"]
+brokerType: ["ECN", "STP", "NDD"]
 instruments: { forex: true, indices: true, commodities: true, gold: true, stocks: true, crypto: true, etfs: true }
 leverageMax: "1:500 en la entidad offshore; la entidad australiana (ASIC) solo opera con clientes mayoristas e institucionales, no minoristas"
 copyTrading: true

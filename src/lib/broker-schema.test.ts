@@ -10,6 +10,7 @@ const valid = {
   commissionPerLot: null, swapFree: true,
   accountTypes: [{ name: 'Std', spreadFrom: 1, commission: 'Sin comisión', minDeposit: { amount: 100, currency: 'USD' } }],
   platforms: ['MT4'],
+  brokerType: ['STP'],
   instruments: { forex: true, indices: false, commodities: false, gold: false, stocks: false, crypto: false, etfs: false },
   leverageMax: '1:500', copyTrading: false, easAllowed: true, scalpingAllowed: true,
   demoAccount: true, islamicAccount: false, paymentMethods: ['Tarjeta'],

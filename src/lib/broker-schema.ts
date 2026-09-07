@@ -43,6 +43,9 @@ export const brokerSchema = z.object({
     minDeposit: money,
   })).min(1),
   platforms: z.array(z.enum(['MT4', 'MT5', 'cTrader', 'WebTrader', 'propia', 'movil'])).min(1),
+  brokerType: z
+    .array(z.enum(['Creador de mercado', 'STP', 'ECN', 'NDD', 'DMA']))
+    .min(1),
   instruments: z.object({
     forex: z.boolean(), indices: z.boolean(), commodities: z.boolean(), gold: z.boolean(),
     stocks: z.boolean(), crypto: z.boolean(), etfs: z.boolean(),

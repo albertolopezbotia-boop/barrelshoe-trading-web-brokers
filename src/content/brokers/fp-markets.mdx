@@ -24,6 +24,7 @@ accountTypes:
   - { name: "Raw", spreadFrom: 0.0, commission: "Desde 3 USD por lado (6 USD ida y vuelta)", minDeposit: { amount: 100, currency: "USD" } }
   - { name: "IRESS (acciones DMA)", spreadFrom: 0.0, commission: "Comisión por operación sobre acciones al contado; tarifas y mínimos según mercado", minDeposit: { amount: 1000, currency: "USD" } }
 platforms: ["MT4", "MT5", "cTrader", "propia"]
+brokerType: ["ECN", "STP", "NDD"]
 instruments: { forex: true, indices: true, commodities: true, gold: true, stocks: true, crypto: true, etfs: true }
 leverageMax: "1:500"
 copyTrading: true
