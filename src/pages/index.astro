@@ -14,14 +14,21 @@ const byRank = sortByRank(entries);
 const top3 = sortByRating(entries).slice(0, 3);
 const hasBrokers = entries.length > 0;
 
+const scoreFmt = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const score10 = (r: number) => scoreFmt.format(Math.round(r * 2 * 10) / 10);
+
 const dateFmt = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' });
 const lastUpdated = entries.length
-  ? dateFmt.format(
-      entries
-        .map((e) => e.data.lastUpdated)
-        .reduce((a, b) => (a > b ? a : b)),
-    )
+  ? dateFmt.format(entries.map((e) => e.data.lastUpdated).reduce((a, b) => (a > b ? a : b)))
   : dateFmt.format(new Date());
+
+const catBadge: Record<string, string> = {
+  mt4: 'MT4',
+  mt5: 'MT5',
+  ctrader: 'cT',
+  'copy-trading': 'CT',
+  oro: 'Au',
+};
 
 const ld = [
   organizationLd(),
@@ -35,22 +42,67 @@ const ld = [
   title={`${SITE.name} — ${SITE.tagline}`}
   description={SITE.description}
   canonicalPath="/"
+  headerVariant="onDark"
   jsonLd={ld}
 >
   <section class="hero">
-    <div class="container hero__inner">
-      <h1>Los mejores brokers para <span class="hero__hl">España y Latinoamérica</span>, comparados</h1>
-      <p class="hero__lead">{SITE.description}</p>
-      <ul class="hero__trust">
-        <li class="chip chip--positive">✓ {hasBrokers ? entries.length : 10} brokers analizados</li>
-        <li class="chip chip--positive">✓ Metodología pública</li>
-        <li class="chip chip--positive">✓ Actualizado {lastUpdated}</li>
-      </ul>
-      <p class="hero__disc">
-        Contenido con enlaces de afiliado — no cambia nuestras valoraciones.
-        <a href="/aviso-legal/">Cómo ganamos dinero</a>.
-      </p>
+    <div class="container hero__grid">
+      <div class="hero__lead-col">
+        <h1>Los mejores brokers para <span class="hero__hl">España y Latinoamérica</span>, comparados</h1>
+        <p class="hero__lead">{SITE.description}</p>
+        <ul class="hero__trust">
+          <li>✓ {hasBrokers ? entries.length : 10} brokers analizados</li>
+          <li>✓ Metodología pública</li>
+          <li>✓ Actualizado {lastUpdated}</li>
+        </ul>
+        <p class="hero__disc">
+          Contenido con enlaces de afiliado — no cambia nuestras valoraciones.
+          <a href="/aviso-legal/">Cómo ganamos dinero</a>.
+        </p>
+      </div>
+
+      {hasBrokers && (
+        <aside class="hero__top3" aria-label="Los tres mejores brokers ahora mismo">
+          <h2>Los 3 mejores ahora</h2>
+          <ol>
+            {top3.map((e, i) => (
+              <li class:list={{ first: i === 0 }}>
+                <span class="rk">{i + 1}</span>
+                <a href={`/brokers/${e.slug}/`}>{e.data.name}</a>
+                <span class="sc">{score10(e.data.rating)}<small>/10</small></span>
+              </li>
+            ))}
+          </ol>
+          <a class="hero__top3-link" href="#comparativa">Ver la comparativa completa ›</a>
+        </aside>
+      )}
     </div>
+  </section>
+
+  <section id="rankings" class="home-section container">
+    <h2>Rankings por categoría</h2>
+    <ul class="cat-tiles">
+      {CATEGORIES.map((c) => (
+        <li>
+          <a href={`/mejores-brokers/${c.slug}/`}>
+            <span class="cat-tiles__badge" aria-hidden="true">{catBadge[c.slug] ?? c.shortTitle}</span>
+            <span class="cat-tiles__body">
+              <span class="cat-tiles__short">{c.shortTitle}</span>
+              <span class="cat-tiles__title">{c.title}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+      <li>
+        <a href="#comparativa">
+          <span class="cat-tiles__badge" aria-hidden="true">↔</span>
+          <span class="cat-tiles__body">
+            <span class="cat-tiles__short">Comparativa</span>
+            <span class="cat-tiles__title">Los 10 brokers, tabla completa</span>
+          </span>
+        </a>
+      </li>
+    </ul>
   </section>
 
   <section id="comparativa" class="home-section container">
@@ -77,20 +129,6 @@ const ld = [
     )}
   </section>
 
-  <section id="rankings" class="home-section container">
-    <h2>Rankings por categoría</h2>
-    <ul class="cat-links">
-      {CATEGORIES.map((c) => (
-        <li>
-          <a href={`/mejores-brokers/${c.slug}/`}>
-            <span class="cat-links__short">{c.shortTitle}</span>
-            <span class="cat-links__title">{c.title}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
-
   <section class="home-section container-narrow methodology-teaser">
     <h2>Nuestra metodología</h2>
     <p>{SITE.methodologyBlurb}</p>
@@ -100,63 +138,117 @@ const ld = [
 
 <style>
   .hero {
-    background: linear-gradient(180deg, var(--color-primary-tint), var(--color-bg) 70%);
-    border-bottom: 1px solid var(--color-border);
-  }
-  .hero__inner {
-    padding-top: var(--space-16);
+    background: linear-gradient(160deg, var(--color-hero), var(--color-hero-2));
+    color: var(--color-on-hero);
+    margin-top: calc(-1 * var(--header-h));
+    padding-top: calc(var(--header-h) + var(--space-8));
     padding-bottom: var(--space-12);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: center;
   }
   .hero h1 {
-    max-width: 20ch;
-    font-size: clamp(2rem, 5vw + 1rem, var(--font-size-3xl));
+    color: var(--color-on-hero);
+    max-width: 18ch;
+    font-size: clamp(1.9rem, 4vw + 1rem, var(--font-size-3xl));
   }
-  .hero__hl { color: var(--color-primary); }
+  .hero__hl { color: var(--color-hero-hl); }
   .hero__lead {
+    color: var(--color-on-hero-dim);
     font-size: var(--font-size-lg);
-    color: var(--color-text-muted);
-    max-width: 52ch;
+    max-width: 46ch;
+    margin-top: var(--space-3);
   }
   .hero__trust {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
     list-style: none;
-    margin: var(--space-2) 0 0;
+    margin: var(--space-4) 0 0;
     padding: 0;
   }
-  .hero__disc {
+  .hero__trust li {
     font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
+    font-weight: 600;
+    color: #cfe0f7;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius-pill);
+    padding: var(--space-1) var(--space-3);
   }
+  .hero__disc { margin-top: var(--space-4); font-size: var(--font-size-xs); color: var(--color-on-hero-dim); }
+  .hero__disc a { color: var(--color-hero-hl); }
 
-  .home-section {
-    padding-block: var(--space-12);
+  .hero__top3 {
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 24px 60px rgba(4, 12, 28, 0.45);
+    padding: var(--space-6);
   }
-  .home-section > h2 {
-    margin-bottom: var(--space-6);
-  }
-  .empty-state {
-    margin-top: var(--space-4);
+  .hero__top3 h2 {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--color-text-muted);
+    margin: 0 0 var(--space-3);
+  }
+  .hero__top3 ol { list-style: none; margin: 0; padding: 0; }
+  .hero__top3 li {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .hero__top3 li:last-of-type { border-bottom: 0; }
+  .hero__top3 .rk {
+    width: 1.4rem;
+    height: 1.4rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    font-weight: 800;
+    font-size: var(--font-size-xs);
+  }
+  .hero__top3 li.first .rk { background: var(--color-primary); color: var(--color-text-inverse); }
+  .hero__top3 li a { font-weight: 700; color: var(--color-ink); }
+  .hero__top3 .sc {
+    font-weight: 800;
+    color: var(--color-ink);
+    background: var(--color-rating-bg);
+    border: 1px solid var(--color-rating-border);
+    border-radius: var(--radius-md);
+    padding: 1px 7px;
     font-size: var(--font-size-sm);
+    white-space: nowrap;
   }
+  .hero__top3 .sc small { color: var(--color-text-muted); font-weight: 600; }
+  .hero__top3-link { display: inline-block; margin-top: var(--space-3); font-size: var(--font-size-sm); font-weight: 700; }
 
-  .cat-links {
+  .home-section { padding-block: var(--space-12); }
+  .home-section > h2 { margin-bottom: var(--space-6); }
+  .empty-state { margin-top: var(--space-4); color: var(--color-text-muted); font-size: var(--font-size-sm); }
+
+  .cat-tiles {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     gap: var(--space-3);
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
   }
-  .cat-links a {
+  .cat-tiles a {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
+    gap: var(--space-3);
+    align-items: flex-start;
     height: 100%;
     background: var(--color-surface-raised);
     border: 1px solid var(--color-border);
@@ -166,16 +258,33 @@ const ld = [
     color: var(--color-text);
     transition: box-shadow 0.15s ease;
   }
-  .cat-links a:hover { box-shadow: var(--shadow-card-hover); text-decoration: none; }
-  .cat-links__short {
+  .cat-tiles a:hover { box-shadow: var(--shadow-card-hover); text-decoration: none; }
+  .cat-tiles__badge {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-md);
+    background: var(--color-primary-tint);
+    color: var(--color-primary);
+    font-weight: 800;
+    font-size: var(--font-size-sm);
+  }
+  .cat-tiles__body { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+  .cat-tiles__short {
     font-size: var(--font-size-xs);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--color-primary);
   }
-  .cat-links__title { font-weight: 700; color: var(--color-ink); line-height: var(--line-tight); }
+  .cat-tiles__title { font-weight: 700; color: var(--color-ink); line-height: var(--line-tight); }
 
   .methodology-teaser p { color: var(--color-text-muted); }
   .methodology-teaser p + p { margin-top: var(--space-3); }
+
+  @media (min-width: 900px) {
+    .hero__grid { grid-template-columns: 1.05fr 0.95fr; }
+  }
 </style>

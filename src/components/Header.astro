@@ -2,11 +2,16 @@
 import { SITE } from '../data/site';
 import { CATEGORIES } from '../data/categories';
 
+interface Props {
+  onDark?: boolean;
+}
+const { onDark = false } = Astro.props;
+
 const withSlash = (p: string) => (p.endsWith('/') ? p : `${p}/`);
 const current = withSlash(Astro.url.pathname);
 const isCurrent = (href: string) => withSlash(href) === current;
 ---
-<header class="site-header">
+<header class:list={['site-header', { 'on-dark': onDark }]} data-on-dark={onDark ? '' : undefined}>
   <div class="container header-inner">
     <a class="brand" href="/">
       <span class="brand__mark" aria-hidden="true">B</span>
@@ -30,6 +35,16 @@ const isCurrent = (href: string) => withSlash(href) === current;
     </nav>
   </div>
 </header>
+{onDark && (
+  <script>
+    const header = document.querySelector('.site-header.on-dark');
+    if (header) {
+      const onScroll = () => header.classList.toggle('is-solid', window.scrollY > 80);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+  </script>
+)}
 <style>
   .site-header {
     position: sticky;
@@ -38,6 +53,7 @@ const isCurrent = (href: string) => withSlash(href) === current;
     border-bottom: 1px solid var(--color-border);
     background: rgba(250, 249, 247, 0.85);
     backdrop-filter: saturate(1.4) blur(8px);
+    transition: background 0.2s ease, border-color 0.2s ease;
   }
   .header-inner {
     display: flex;
@@ -89,6 +105,19 @@ const isCurrent = (href: string) => withSlash(href) === current;
     color: var(--color-ink);
     border-bottom-color: var(--color-primary);
   }
+
+  /* transparent over the dark hero, until scrolled */
+  .site-header.on-dark:not(.is-solid) {
+    background: transparent;
+    border-bottom-color: transparent;
+    backdrop-filter: none;
+  }
+  .site-header.on-dark:not(.is-solid) .brand { color: var(--color-on-hero); }
+  .site-header.on-dark:not(.is-solid) .brand__mark { background: var(--color-on-hero); color: var(--color-hero); }
+  .site-header.on-dark:not(.is-solid) .site-nav a { color: var(--color-on-hero-dim); }
+  .site-header.on-dark:not(.is-solid) .site-nav a:hover,
+  .site-header.on-dark:not(.is-solid) .site-nav a[aria-current="page"] { color: var(--color-on-hero); border-bottom-color: var(--color-on-hero); }
+
   @media (min-width: 640px) {
     .header-inner {
       flex-direction: row;
@@ -96,5 +125,8 @@ const isCurrent = (href: string) => withSlash(href) === current;
       justify-content: space-between;
       padding-block: var(--space-4);
     }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .site-header { transition: none; }
   }
 </style>
