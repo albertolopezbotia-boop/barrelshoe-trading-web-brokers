@@ -1,0 +1,88 @@
+---
+import type { BrokerData } from '../lib/broker-schema';
+interface Props {
+  regulators: BrokerData['regulators'];
+}
+const { regulators } = Astro.props;
+
+const TIER1 = ['FCA', 'ASIC', 'CySEC'];
+const OFFSHORE = ['FSC', 'FSA', 'SCB', 'VFSC', 'CBCS', 'FSRA', 'CIMA'];
+
+const active = regulators.filter((r) => r.status === 'activa');
+const withdrawn = regulators.filter((r) => r.status === 'retirada');
+const tier1 = [...new Set(active.filter((r) => TIER1.includes(r.authority)).map((r) => r.authority))];
+const offshore = active.filter((r) => OFFSHORE.includes(r.authority));
+
+const lines: Array<{ tone: 'ok' | 'warn' | 'bad'; text: string }> = [];
+
+if (active.length > 0) {
+  const base = `Regulado — ${active.length} ${active.length === 1 ? 'licencia activa' : 'licencias activas'}`;
+  lines.push({
+    tone: tier1.length > 0 ? 'ok' : 'warn',
+    text:
+      tier1.length > 0
+        ? `${base}, ${tier1.length} de nivel 1 (${tier1.join(' · ')})`
+        : `${base}, todas en jurisdicciones offshore o de menor exigencia`,
+  });
+} else {
+  lines.push({ tone: 'bad', text: 'Sin licencias activas verificadas' });
+}
+
+if (tier1.length > 0 && offshore.length > 0) {
+  lines.push({
+    tone: 'warn',
+    text: 'También opera entidades offshore: según tu país de residencia contratas con una u otra. Revisa el análisis para saber cuál te aplica.',
+  });
+}
+if (withdrawn.length > 0) {
+  lines.push({
+    tone: 'bad',
+    text: `Licencia retirada o caducada: ${withdrawn.map((r) => r.authority).join(', ')}`,
+  });
+}
+---
+<div class="reg-summary">
+  {lines.map((l) => (
+    <p class:list={['reg-summary__line', l.tone]}>
+      <span class="reg-summary__dot" aria-hidden="true"></span>
+      {l.text}
+    </p>
+  ))}
+</div>
+<style>
+  .reg-summary { display: grid; gap: var(--space-2); }
+  .reg-summary__line {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    line-height: var(--line-base);
+  }
+  .reg-summary__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: 0 0 auto;
+    transform: translateY(1px);
+  }
+  .reg-summary__line.ok {
+    color: var(--color-positive);
+    background: var(--color-positive-bg);
+    border-color: var(--color-positive-border);
+  }
+  .reg-summary__line.warn {
+    color: #8a5a00;
+    background: var(--color-warning-bg);
+    border-color: var(--color-warning-border);
+  }
+  .reg-summary__line.bad {
+    color: var(--color-danger);
+    background: var(--color-danger-bg);
+    border-color: var(--color-danger-border);
+  }
+</style>

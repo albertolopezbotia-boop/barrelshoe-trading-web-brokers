@@ -1,5 +1,6 @@
 ---
 import type { BrokerData } from '../lib/broker-schema';
+import Flag from './Flag.astro';
 interface Props {
   regulators: BrokerData['regulators'];
 }
@@ -10,78 +11,77 @@ const statusClass: Record<string, string> = {
   retirada: 'is-retirada',
 };
 ---
-<div class="regulation-card">
-  <table class="regulation-table">
-    <thead>
-      <tr>
-        <th scope="col">Autoridad</th>
-        <th scope="col">País</th>
-        <th scope="col">Nº de licencia</th>
-        <th scope="col">Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {regulators.map((r) => (
-        <tr>
-          <td class="authority">{r.authority}</td>
-          <td>{r.country}</td>
-          <td>{r.licenseNumber}</td>
-          <td>
-            <span class:list={['status', statusClass[r.status]]}>{r.status}</span>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+<ul class="licenses">
+  {regulators.map((r) => (
+    <li class="license">
+      <div class="license__top">
+        <span class="license__auth">{r.authority}</span>
+        <span class:list={['license__status', statusClass[r.status]]}>{r.status}</span>
+      </div>
+      <p class="license__country"><Flag country={r.country} /> {r.country}</p>
+      <p class="license__num">Nº de licencia · <b>{r.licenseNumber}</b></p>
+    </li>
+  ))}
+</ul>
 <style>
-  .regulation-card {
+  .licenses {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-3);
+  }
+  .license {
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     background: var(--color-surface-raised);
-    overflow: hidden;
-  }
-  .regulation-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: var(--font-size-sm);
-  }
-  th, td {
-    text-align: left;
     padding: var(--space-3) var(--space-4);
-    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
   }
-  tbody tr:last-child td { border-bottom: 0; }
-  th {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+  .license__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
   }
-  .authority { font-weight: 700; color: var(--color-ink); }
-  .status {
-    display: inline-block;
-    text-transform: capitalize;
+  .license__auth { font-weight: 800; color: var(--color-ink); font-size: var(--font-size-base); }
+  .license__status {
     font-size: var(--font-size-xs);
     font-weight: 700;
     padding: 2px 8px;
     border-radius: var(--radius-pill);
+    text-transform: capitalize;
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);
   }
-  .status.is-activa {
+  .license__status.is-activa {
     color: var(--color-positive);
     background: var(--color-positive-bg);
     border-color: var(--color-positive-border);
   }
-  .status.is-limitada {
+  .license__status.is-limitada {
     color: #8a5a00;
     background: var(--color-warning-bg);
     border-color: var(--color-warning-border);
   }
-  .status.is-retirada {
+  .license__status.is-retirada {
     color: var(--color-danger);
     background: var(--color-danger-bg);
     border-color: var(--color-danger-border);
   }
+  .license__country {
+    margin: var(--space-3) 0 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .license__num {
+    margin: var(--space-1) 0 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+  .license__num b { color: var(--color-text); font-weight: 600; }
 </style>

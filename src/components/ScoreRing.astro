@@ -1,0 +1,58 @@
+---
+interface Props {
+  /** rating on a 0-5 scale (as stored in the schema) */
+  value: number;
+  size?: 'lg' | 'md';
+}
+const { value, size = 'lg' } = Astro.props;
+const value10 = Math.round(value * 2 * 10) / 10;
+const pct = Math.max(0, Math.min(100, (value10 / 10) * 100));
+const label = new Intl.NumberFormat('es-ES', {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+}).format(value10);
+---
+<div
+  class:list={['score-ring', `score-ring--${size}`]}
+  style={`--pct:${pct}`}
+  role="img"
+  aria-label={`Puntuación ${label} sobre 10`}
+>
+  <b>{label}</b>
+  <small>/ 10</small>
+</div>
+<style>
+  .score-ring {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: conic-gradient(var(--color-primary) calc(var(--pct) * 1%), var(--color-surface) 0);
+    position: relative;
+  }
+  .score-ring--lg { width: 5.5rem; height: 5.5rem; }
+  .score-ring--md { width: 4rem; height: 4rem; }
+  .score-ring::before {
+    content: "";
+    position: absolute;
+    inset: 0.5rem;
+    border-radius: 50%;
+    background: var(--color-surface-raised);
+  }
+  .score-ring--md::before { inset: 0.4rem; }
+  .score-ring b {
+    position: relative;
+    font-weight: 800;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .score-ring--lg b { font-size: 1.5rem; }
+  .score-ring--md b { font-size: 1.1rem; }
+  .score-ring small {
+    position: relative;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+</style>

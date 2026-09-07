@@ -1,0 +1,38 @@
+---
+import type { BrokerData } from '../lib/broker-schema';
+import { money, pips } from '../lib/format';
+interface Props {
+  accountTypes: BrokerData['accountTypes'];
+}
+const { accountTypes } = Astro.props;
+---
+<div class="acct-grid">
+  {accountTypes.map((a) => (
+    <div class="acct">
+      <h3>{a.name}</h3>
+      <dl>
+        <div><dt>Spread desde</dt><dd>{pips(a.spreadFrom)}</dd></div>
+        <div><dt>Comisión</dt><dd>{a.commission}</dd></div>
+        <div><dt>Depósito mínimo</dt><dd>{money(a.minDeposit)}</dd></div>
+      </dl>
+    </div>
+  ))}
+</div>
+<style>
+  .acct-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: var(--space-3);
+  }
+  .acct {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-raised);
+    padding: var(--space-4);
+  }
+  .acct h3 { font-size: var(--font-size-base); margin: 0 0 var(--space-2); }
+  .acct dl { margin: 0; display: grid; gap: var(--space-1); font-size: var(--font-size-xs); }
+  .acct dl div { display: flex; justify-content: space-between; gap: var(--space-3); }
+  .acct dt { color: var(--color-text-muted); flex: 0 0 auto; }
+  .acct dd { margin: 0; font-weight: 600; color: var(--color-ink); text-align: right; }
+</style>

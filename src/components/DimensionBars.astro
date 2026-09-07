@@ -1,0 +1,66 @@
+---
+import type { BrokerData } from '../lib/broker-schema';
+interface Props {
+  breakdown: BrokerData['ratingBreakdown'];
+}
+const { breakdown } = Astro.props;
+const fmt = new Intl.NumberFormat('es-ES', {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
+const rows: Array<{ label: string; value: number }> = [
+  { label: 'Costes', value: breakdown.fees },
+  { label: 'Plataformas', value: breakdown.platforms },
+  { label: 'Depósitos y retiros', value: breakdown.deposits },
+  { label: 'Atención al cliente', value: breakdown.support },
+  { label: 'Regulación', value: breakdown.regulation },
+];
+---
+<ul class="dim-bars">
+  {rows.map((r) => (
+    <li>
+      <span class="dim-bars__label">{r.label}</span>
+      <span class="dim-bars__track" aria-hidden="true">
+        <span class="dim-bars__fill" style={`width:${(r.value / 5) * 100}%`}></span>
+      </span>
+      <b class="dim-bars__value">{fmt.format(Math.round(r.value * 2 * 10) / 10)}</b>
+    </li>
+  ))}
+</ul>
+<style>
+  .dim-bars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+  .dim-bars li {
+    display: grid;
+    grid-template-columns: 10rem 1fr auto;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+  .dim-bars__label { color: var(--color-text-muted); }
+  .dim-bars__track {
+    height: 7px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+  .dim-bars__fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-primary);
+  }
+  .dim-bars__value {
+    font-weight: 800;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 520px) {
+    .dim-bars li { grid-template-columns: 7.5rem 1fr auto; }
+  }
+</style>

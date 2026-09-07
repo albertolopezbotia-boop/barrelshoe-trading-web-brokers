@@ -1,0 +1,101 @@
+---
+import type { BrokerData } from '../lib/broker-schema';
+interface Props {
+  broker: BrokerData;
+}
+const { broker } = Astro.props;
+
+const platformLabels: Record<string, string> = {
+  MT4: 'MetaTrader 4',
+  MT5: 'MetaTrader 5',
+  cTrader: 'cTrader',
+  WebTrader: 'WebTrader',
+  propia: 'Plataforma propia',
+  movil: 'App móvil',
+};
+
+const instruments: Array<{ key: keyof BrokerData['instruments']; label: string }> = [
+  { key: 'forex', label: 'Forex' },
+  { key: 'indices', label: 'Índices' },
+  { key: 'commodities', label: 'Materias primas' },
+  { key: 'gold', label: 'Oro' },
+  { key: 'stocks', label: 'Acciones' },
+  { key: 'crypto', label: 'Cripto' },
+  { key: 'etfs', label: 'ETFs' },
+];
+
+const features: Array<{ on: boolean; label: string }> = [
+  { on: broker.copyTrading, label: 'Copy trading' },
+  { on: broker.easAllowed, label: 'Expert advisors' },
+  { on: broker.scalpingAllowed, label: 'Scalping' },
+  { on: broker.demoAccount, label: 'Cuenta demo' },
+  { on: broker.islamicAccount, label: 'Cuenta islámica' },
+  { on: broker.swapFree, label: 'Sin swap' },
+];
+---
+<div class="spec-chips">
+  <div class="spec-chips__group">
+    <h3>Plataformas</h3>
+    <ul class="chip-row">
+      {broker.platforms.map((p) => (
+        <li class="chip">{platformLabels[p] ?? p}</li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="spec-chips__group">
+    <h3>Instrumentos</h3>
+    <ul class="chip-row">
+      {instruments.map((i) => (
+        <li class:list={['chip', broker.instruments[i.key] ? 'chip--yes' : 'chip--no']}>
+          {broker.instruments[i.key] ? '✓' : '—'} {i.label}
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="spec-chips__group">
+    <h3>Operativa</h3>
+    <ul class="chip-row">
+      {features.map((f) => (
+        <li class:list={['chip', f.on ? 'chip--yes' : 'chip--no']}>
+          {f.on ? '✓' : '—'} {f.label}
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+<style>
+  .spec-chips { display: grid; gap: var(--space-6); }
+  .spec-chips__group h3 {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    font-weight: 700;
+    margin: 0 0 var(--space-3);
+  }
+  .chip-row {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .chip {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+  }
+  .chip--yes {
+    color: var(--color-positive);
+    background: var(--color-positive-bg);
+    border-color: var(--color-positive-border);
+  }
+  .chip--no { color: var(--color-text-muted); }
+</style>

@@ -1,0 +1,44 @@
+---
+interface Props {
+  country: string;
+}
+const { country } = Astro.props;
+
+/* Simplified flag fills (CSS gradients) keyed by the Spanish country name used in the broker data. */
+const FLAGS: Record<string, string> = {
+  'Australia': 'linear-gradient(90deg,#00247d 42%,#fff 42% 50%,#e4002b 50% 58%,#fff 58%,#00247d 66%)',
+  'Bahamas': 'linear-gradient(180deg,#00778b 33%,#ffc72c 33% 66%,#00778b 66%)',
+  'Belice': 'linear-gradient(180deg,#ce1126 12%,#003f87 12% 88%,#ce1126 88%)',
+  'Chipre': 'linear-gradient(180deg,#fff 68%,#6f8f3f 68%)',
+  'Curazao': 'linear-gradient(180deg,#0038a8 58%,#f9d616 58% 74%,#0038a8 74%)',
+  'Emiratos Árabes Unidos': 'linear-gradient(90deg,#ce1126 26%,transparent 0),linear-gradient(180deg,#009639 33%,#fff 33% 66%,#000 66%)',
+  'Islas Caimán': 'linear-gradient(90deg,#00247d 44%,#fff 44% 52%,#e4002b 52% 60%,#fff 60%,#00247d 68%)',
+  'Kenia': 'linear-gradient(180deg,#000 30%,#fff 30% 36%,#bb0000 36% 64%,#fff 64% 70%,#006600 70%)',
+  'Mauricio': 'linear-gradient(180deg,#ea2839 25%,#1a206d 25% 50%,#ffd500 50% 75%,#00a551 75%)',
+  'Reino Unido': 'linear-gradient(90deg,#012169 40%,#fff 40% 46%,#c8102e 46% 54%,#fff 54% 60%,#012169 60%)',
+  'San Vicente y las Granadinas': 'linear-gradient(90deg,#0072c6 33%,#fcd116 33% 66%,#009e60 66%)',
+  'Santa Lucía': 'linear-gradient(180deg,#66ccff 100%)',
+  'Seychelles': 'conic-gradient(from -50deg at 0% 100%,#003f87 0 20%,#fcd955 20% 40%,#d62828 40% 60%,#fff 60% 80%,#007a3d 80%)',
+  'Sudáfrica': 'linear-gradient(180deg,#007a4d 33%,#000 33% 66%,#ffb612 66%)',
+  'Vanuatu': 'linear-gradient(180deg,#d21034 50%,#009543 50%)',
+};
+const fill = FLAGS[country];
+---
+{fill ? (
+  <span class="flag" style={`background:${fill}`} role="img" aria-label={country}></span>
+) : (
+  <span class="flag flag--blank" role="img" aria-label={country}></span>
+)}
+<style>
+  .flag {
+    display: inline-block;
+    width: 1.15rem;
+    height: 0.78rem;
+    border-radius: 2px;
+    vertical-align: -1px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    background-size: cover;
+    flex: 0 0 auto;
+  }
+  .flag--blank { background: var(--color-surface); }
+</style>

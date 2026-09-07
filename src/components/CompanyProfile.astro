@@ -5,15 +5,27 @@ interface Props {
   broker: BrokerData;
 }
 const { broker } = Astro.props;
+const currentYear = new Date().getFullYear();
+const years = currentYear - broker.founded;
+const host = broker.websiteUrl.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 ---
 <dl class="company-profile">
   <div class="row"><dt>Propiedad</dt><dd>{broker.ownership}</dd></div>
   <div class="row"><dt>Cotiza en bolsa</dt><dd>{yesNo(broker.listedCompany)}</dd></div>
-  <div class="row"><dt>Fundación</dt><dd>{broker.founded}</dd></div>
+  <div class="row"><dt>Fundación</dt><dd>{broker.founded} · {years} años en el mercado</dd></div>
   <div class="row"><dt>Sede</dt><dd>{broker.headquarters}</dd></div>
   {broker.globalOffices.length > 0 && (
-    <div class="row"><dt>Oficinas globales</dt><dd>{broker.globalOffices.join(', ')}</dd></div>
+    <div class="row"><dt>Oficinas globales</dt><dd>{broker.globalOffices.join(' · ')}</dd></div>
   )}
+  <div class="row"><dt>Web oficial</dt><dd>{host}</dd></div>
+  <div class="row">
+    <dt>Atención al cliente</dt>
+    <dd>
+      {broker.support.hours} · {broker.support.channels.join(', ')} ·
+      {' '}{broker.support.languages.length} idiomas
+      {broker.support.languages.includes('Español') ? ' (español incluido)' : ''}
+    </dd>
+  </div>
   {broker.groupEntities.length > 0 && (
     <div class="row">
       <dt>Entidades del grupo</dt>
@@ -42,10 +54,14 @@ const { broker } = Astro.props;
   dt { color: var(--color-text-muted); font-size: var(--font-size-sm); flex: 0 0 auto; }
   dd {
     margin: 0;
-    font-weight: 700;
+    font-weight: 600;
     text-align: right;
     color: var(--color-ink);
     font-size: var(--font-size-sm);
   }
   ul { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-1); }
+  @media (max-width: 560px) {
+    .row { flex-direction: column; gap: var(--space-1); }
+    dd { text-align: left; }
+  }
 </style>
