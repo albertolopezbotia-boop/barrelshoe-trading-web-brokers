@@ -425,6 +425,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
     white-space: nowrap;
     border-bottom: 1px solid var(--color-border);
   }
+  thead th:not(.th-broker) { text-align: center; }
   thead th:nth-child(1) { width: 13rem; }
   thead th:nth-child(2) { width: 9.5rem; }
   thead th:nth-child(3) { width: 7.5rem; }
@@ -457,6 +458,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
     border-bottom: 1px solid var(--color-border);
     vertical-align: middle;
   }
+  tbody .brow td:not(.cell-broker) { text-align: center; }
   tbody .brow.is-top { background: var(--color-primary-tint); }
   tbody .brow:hover { background: var(--color-surface); }
   tbody .brow.is-top:hover { background: var(--color-primary-tint); }
