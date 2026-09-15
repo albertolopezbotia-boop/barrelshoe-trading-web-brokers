@@ -11,6 +11,10 @@ const withSlash = (p: string) => (p.endsWith('/') ? p : `${p}/`);
 const current = withSlash(Astro.url.pathname);
 const isCurrent = (href: string) => withSlash(href) === current;
 ---
+<div class="promo-bar">
+  <p><strong>NUEVO</strong> Comparativa de brokers actualizada para 2026</p>
+  <a class="promo-bar__cta" href="/#comparativa">Ver comparativa</a>
+</div>
 <header class:list={['site-header', { 'on-dark': onDark }]} data-on-dark={onDark ? '' : undefined}>
   <div class="container header-inner">
     <a class="brand" href="/" aria-label={`${SITE.name} — inicio`}>
@@ -32,6 +36,7 @@ const isCurrent = (href: string) => withSlash(href) === current;
         <li><a href="/metodologia/" aria-current={isCurrent('/metodologia/') ? 'page' : undefined}>Metodología</a></li>
       </ul>
     </nav>
+    <a class="header-cta" href="/#comparativa">Ver comparativa</a>
   </div>
 </header>
 {onDark && (
@@ -54,6 +59,37 @@ const isCurrent = (href: string) => withSlash(href) === current;
     backdrop-filter: saturate(1.4) blur(10px);
     transition: background 0.2s ease, border-color 0.2s ease;
   }
+  .promo-bar {
+    background: var(--color-primary-dark);
+    color: var(--color-on-shell);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1) var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-xs);
+    text-align: center;
+  }
+  .promo-bar p { margin: 0; }
+  .promo-bar strong {
+    color: var(--color-coral);
+    font-weight: 800;
+    margin-right: var(--space-1);
+  }
+  .promo-bar__cta {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    color: var(--color-ink);
+    background: var(--color-on-shell);
+    padding: 3px var(--space-3);
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+  .promo-bar__cta:hover { text-decoration: none; filter: brightness(0.95); }
+
   .header-inner {
     display: flex;
     flex-direction: column;
@@ -93,6 +129,10 @@ const isCurrent = (href: string) => withSlash(href) === current;
     border-bottom-color: var(--color-coral);
   }
 
+  .header-cta {
+    display: none;
+  }
+
   /* transparent over the dark hero, until scrolled */
   .site-header.on-dark:not(.is-solid) {
     background: transparent;
@@ -108,8 +148,25 @@ const isCurrent = (href: string) => withSlash(href) === current;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+      gap: var(--space-6);
       padding-block: var(--space-4);
     }
+    .site-nav { flex: 1; display: flex; justify-content: center; }
+  }
+  @media (min-width: 860px) {
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      flex: 0 0 auto;
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      color: var(--color-on-shell);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: var(--space-2) var(--space-5);
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+    }
+    .header-cta:hover { border-color: var(--color-on-shell); text-decoration: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     .site-header { transition: none; }
