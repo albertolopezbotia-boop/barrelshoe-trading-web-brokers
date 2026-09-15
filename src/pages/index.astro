@@ -15,11 +15,11 @@ const top3 = sortByRating(entries).slice(0, 3);
 const hasBrokers = entries.length > 0;
 
 const catCardLabel: Record<string, string> = {
-  mt4: 'Los mejores brokers con MT4',
-  mt5: 'Los mejores brokers con MT5',
-  ctrader: 'Los mejores brokers con cTrader',
-  'copy-trading': 'Los mejores para copy trading',
-  oro: 'Los mejores brokers para oro',
+  mt4: 'Principiantes',
+  mt5: 'Cripto',
+  ctrader: 'Cuenta de fondeo',
+  'copy-trading': 'Copitrading',
+  oro: 'Forex',
 };
 
 type HeroCard = { href: string; label: string };
@@ -28,7 +28,7 @@ const heroCards: HeroCard[] = [
     href: `/mejores-brokers/${c.slug}/`,
     label: catCardLabel[c.slug] ?? `Los mejores brokers · ${c.shortTitle}`,
   })),
-  { href: '#comparativa', label: 'Comparativa de los 10 brokers' },
+  { href: '#comparativa', label: 'Xauusd' },
 ];
 
 const ld = [
