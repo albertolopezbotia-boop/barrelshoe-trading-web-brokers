@@ -510,6 +510,16 @@ independientemente de la columna.
   (híbrido A-book/B-book según fuentes); Ultima `[ECN, STP]`; Infinox / PU Prime
   `[STP, NDD]`; **XM `[Creador de mercado]`** (dealing desk confirmado por varias
   fuentes; la cuenta Zero imita precios ECN pero sigue siendo market maker).
+- **`withdrawalMinimum`** (nuevo campo, añadido el 15/09/2026 para la columna
+  "Retiro mín." de la tabla comparativa): importe mínimo de retiro por
+  operación. **Todos a confirmar contra la web oficial** — se investigaron con
+  búsqueda web (agregadores tipo TradersUnion/DailyForex, no las webs oficiales
+  directamente) y el importe real suele variar según el método de pago (tarjeta,
+  e-wallet, transferencia bancaria, cripto); aquí se guarda el mínimo más bajo
+  citado como referencia. Valores usados: FP Markets / XM / FP Trading `5 USD`;
+  Exness / INFINOX / Hantec Markets `10 USD`; Vantage Markets `30 USD` (fuente:
+  centro de ayuda oficial de Vantage); PU Prime / Ultima Markets / VT Markets
+  `40 USD` (fuente: centro de ayuda oficial de cada bróker).
 
 ---
 

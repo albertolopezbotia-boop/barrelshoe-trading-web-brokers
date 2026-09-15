@@ -15,6 +15,7 @@ const valid = {
   leverageMax: '1:500', copyTrading: false, easAllowed: true, scalpingAllowed: true,
   demoAccount: true, islamicAccount: false, paymentMethods: ['Tarjeta'],
   withdrawalTimeTypical: '1 día', withdrawalFees: 'Sin comisión',
+  withdrawalMinimum: { amount: 10, currency: 'USD' },
   ownership: 'X Group', listedCompany: false, globalOffices: [], groupEntities: [],
   support: { languages: ['Español'], hours: '24/5', channels: ['Email'] },
   pros: ['a', 'b'], cons: ['c', 'd'],

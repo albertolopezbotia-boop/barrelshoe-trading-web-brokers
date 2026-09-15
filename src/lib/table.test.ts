@@ -15,6 +15,8 @@ const mk = (over: Partial<Row>): Row => ({
   commission: 'Sin comisión',
   swapFree: true,
   withdrawalTime: '1-2 días',
+  withdrawalMinimum: 10,
+  withdrawalMinimumCurrency: 'USD',
   platforms: ['MT4'],
   brokerType: ['STP'],
   regulators: ['CySEC'],

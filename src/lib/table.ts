@@ -27,6 +27,8 @@ export interface Row {
   commission: string;
   swapFree: boolean;
   withdrawalTime: string;
+  withdrawalMinimum: number | null;
+  withdrawalMinimumCurrency: string;
   platforms: string[];
   brokerType: string[];
   regulators: string[];
@@ -70,6 +72,8 @@ export function toRow(entry: BrokerEntry): Row {
       : 'Sin comisión',
     swapFree: d.swapFree,
     withdrawalTime: d.withdrawalTimeTypical,
+    withdrawalMinimum: d.withdrawalMinimum?.amount ?? null,
+    withdrawalMinimumCurrency: d.withdrawalMinimum?.currency ?? 'USD',
     platforms: d.platforms,
     brokerType: d.brokerType,
     regulators: d.regulators.map((r) => r.authority),

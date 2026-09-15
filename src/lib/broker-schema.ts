@@ -59,6 +59,8 @@ export const brokerSchema = z.object({
   paymentMethods: z.array(z.string().min(1)).min(1),
   withdrawalTimeTypical: z.string().min(1),
   withdrawalFees: z.string().min(1),
+  /** Importe mínimo de retiro; null si el broker no impone un mínimo. */
+  withdrawalMinimum: money.nullable(),
   ownership: z.string().min(1),
   listedCompany: z.boolean(),
   globalOffices: z.array(z.string().min(1)),

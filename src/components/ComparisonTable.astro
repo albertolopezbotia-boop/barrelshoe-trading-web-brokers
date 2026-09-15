@@ -36,11 +36,6 @@ const shortLeverage = (s: string) => {
   return m ? m[0].replace('：', ':').replace(/\s/g, '') : s.split(/[;(]/)[0]!.trim();
 };
 
-const shortWithdrawal = (s: string) => {
-  const first = s.split(/[;,]/)[0]!.trim();
-  return first.length > 28 ? `${first.slice(0, 26).trim()}…` : first;
-};
-
 const instrumentFilters = [
   { key: 'forex', label: 'Forex' },
   { key: 'stocks', label: 'Acciones' },
@@ -111,7 +106,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
           <th scope="col">Regulación</th>
           <th scope="col">Apalancamiento</th>
           <th scope="col"><button type="button" data-sort="minDeposit">Depósito mín.</button></th>
-          <th scope="col">Retiro</th>
+          <th scope="col">Retiro mín.</th>
           <th scope="col">Bono</th>
           <th scope="col"><button type="button" data-sort="rating">Nota</button></th>
           <th scope="col"><span class="visually-hidden">Cuenta</span></th>
@@ -160,8 +155,10 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
               <td data-label="Depósito mín." class="cell-dep">
                 {money({ amount: r.minDeposit, currency: r.minDepositCurrency })}
               </td>
-              <td data-label="Retiro" class="cell-withdraw" title={r.withdrawalTime}>
-                {shortWithdrawal(r.withdrawalTime)}
+              <td data-label="Retiro mín." class="cell-withdraw" title={r.withdrawalTime}>
+                {r.withdrawalMinimum != null
+                  ? money({ amount: r.withdrawalMinimum, currency: r.withdrawalMinimumCurrency })
+                  : 'Sin mínimo'}
               </td>
               <td data-label="Bono" class="cell-bonus">
                 <span class:list={['bonus-pill', { 'is-yes': r.bonus }]}>{yesNo(r.bonus)}</span>
@@ -236,6 +233,8 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
         commission: '',
         swapFree: false,
         withdrawalTime: '',
+        withdrawalMinimum: null,
+        withdrawalMinimumCurrency: 'USD',
         platforms: (tr.dataset.platforms ?? '').split('|').filter(Boolean),
         brokerType: (tr.dataset.brokertype ?? '').split('|').filter(Boolean),
         regulators: (tr.dataset.regulators ?? '').split('|').filter(Boolean),
@@ -418,23 +417,22 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
   thead th {
     text-align: left;
     padding: var(--space-2) var(--space-3);
-    font-size: var(--font-size-xs);
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.01em;
     color: var(--color-text-muted);
     font-weight: 700;
-    white-space: normal;
-    line-height: 1.2;
+    white-space: nowrap;
     border-bottom: 1px solid var(--color-border);
   }
   thead th:nth-child(1) { width: 13rem; }
-  thead th:nth-child(2) { width: 10rem; }
-  thead th:nth-child(3) { width: 6.5rem; }
-  thead th:nth-child(4) { width: 6rem; }
-  thead th:nth-child(5) { width: 7.5rem; }
+  thead th:nth-child(2) { width: 9.5rem; }
+  thead th:nth-child(3) { width: 7.5rem; }
+  thead th:nth-child(4) { width: 7rem; }
+  thead th:nth-child(5) { width: 6rem; }
   thead th:nth-child(6) { width: 4.5rem; }
   thead th:nth-child(7) { width: 4.5rem; }
-  thead th:nth-child(8) { width: 8.5rem; }
+  thead th:nth-child(8) { width: 8rem; }
   thead th:nth-child(9) { width: 2rem; }
   thead button {
     display: inline-flex;
@@ -517,11 +515,6 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
   .cell-reg {
     line-height: 1.7;
   }
-  .cell-withdraw {
-    font-weight: 600;
-    color: var(--color-ink);
-    line-height: 1.35;
-  }
   .tag {
     display: inline-block;
     font-size: 10px;
@@ -535,7 +528,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
     white-space: nowrap;
   }
   .tag--more { font-weight: 700; color: var(--color-text); }
-  .cell-lev, .cell-dep { white-space: nowrap; font-weight: 600; color: var(--color-ink); }
+  .cell-lev, .cell-dep, .cell-withdraw { white-space: nowrap; font-weight: 600; color: var(--color-ink); }
   .bonus-pill {
     display: inline-block;
     font-size: 11px;
