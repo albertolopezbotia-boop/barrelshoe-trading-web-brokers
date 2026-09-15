@@ -17,7 +17,7 @@ const ratingFmt = new Intl.NumberFormat('es-ES', {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
-const score10 = (r: number) => ratingFmt.format(Math.round(r * 2 * 10) / 10);
+const score5 = (r: number) => ratingFmt.format(Math.round(r * 10) / 10);
 const stars = (r: number) => '★'.repeat(Math.round(r)) + '☆'.repeat(5 - Math.round(r));
 
 const monogram = (name: string) =>
@@ -65,15 +65,15 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
           Filtros
         </button>
       </div>
+      <fieldset class="filters__instr">
+        <legend>Instrumentos</legend>
+        {instrumentFilters.map((i) => (
+          <label>
+            <input type="checkbox" data-filter="instrument" value={i.key} /> {i.label}
+          </label>
+        ))}
+      </fieldset>
       <div class="filters__adv" data-adv hidden>
-        <fieldset class="filters__instr">
-          <legend>Instrumentos</legend>
-          {instrumentFilters.map((i) => (
-            <label>
-              <input type="checkbox" data-filter="instrument" value={i.key} /> {i.label}
-            </label>
-          ))}
-        </fieldset>
         <div class="filters__selects">
           <label>
             <span>Plataforma</span>
@@ -104,10 +104,10 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
             <button type="button" data-sort="rank">Broker</button>
           </th>
           <th scope="col">Regulación</th>
-          <th scope="col">Tipo</th>
-          <th scope="col">Apal. máx.</th>
+          <th scope="col">Apalancamiento</th>
           <th scope="col"><button type="button" data-sort="minDeposit">Depósito mín.</button></th>
-          <th scope="col">Comisión</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Bono</th>
           <th scope="col"><button type="button" data-sort="rating">Nota</button></th>
           <th scope="col"><span class="visually-hidden">Cuenta</span></th>
           <th scope="col"><span class="visually-hidden">Detalles</span></th>
@@ -128,6 +128,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
               data-brokertype={r.brokerType.join('|')}
               data-regulators={r.regulators.join('|')}
               data-instruments={r.instruments.join('|')}
+              data-bonus={r.bonus}
             >
               <td data-label="Broker" class="cell-broker">
                 {showRank && <span class="rk">{r.rank}</span>}
@@ -150,16 +151,18 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
                   <span class="tag tag--more">+{r.regulatorTags.length - 2}</span>
                 )}
               </td>
-              <td data-label="Tipo" class="cell-type">
-                {r.brokerType.map((t) => <span class="tag tag--type">{t}</span>)}
-              </td>
-              <td data-label="Apal. máx." class="cell-lev">{shortLeverage(r.leverageMax)}</td>
+              <td data-label="Apalancamiento" class="cell-lev">{shortLeverage(r.leverageMax)}</td>
               <td data-label="Depósito mín." class="cell-dep">
                 {money({ amount: r.minDeposit, currency: r.minDepositCurrency })}
               </td>
-              <td data-label="Comisión" class="cell-comm">{r.commission}</td>
+              <td data-label="Tipo" class="cell-type">
+                {r.brokerType.map((t) => <span class="tag tag--type">{t}</span>)}
+              </td>
+              <td data-label="Bono" class="cell-bonus">
+                <span class:list={['bonus-pill', { 'is-yes': r.bonus }]}>{yesNo(r.bonus)}</span>
+              </td>
               <td data-label="Nota" class="cell-score">
-                <span class="score">{score10(r.rating)}<small>/10</small></span>
+                <span class="score">{score5(r.rating)}<small>/5</small></span>
               </td>
               <td data-label="Cuenta" class="cell-cta">
                 <AffiliateButton
@@ -233,6 +236,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
         regulators: (tr.dataset.regulators ?? '').split('|').filter(Boolean),
         regulatorTags: [],
         instruments: (tr.dataset.instruments ?? '').split('|').filter(Boolean),
+        bonus: tr.dataset.bonus === 'true',
       }));
 
     const state = {
@@ -414,15 +418,16 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
     letter-spacing: 0.04em;
     color: var(--color-text-muted);
     font-weight: 700;
-    white-space: nowrap;
+    white-space: normal;
+    line-height: 1.2;
     border-bottom: 1px solid var(--color-border);
   }
   thead th:nth-child(1) { width: 13rem; }
-  thead th:nth-child(2) { width: 11rem; }
-  thead th:nth-child(3) { width: 5.5rem; }
-  thead th:nth-child(4) { width: 4.5rem; }
-  thead th:nth-child(5) { width: 6.5rem; }
-  thead th:nth-child(6) { width: 6.5rem; }
+  thead th:nth-child(2) { width: 10.5rem; }
+  thead th:nth-child(3) { width: 6.5rem; }
+  thead th:nth-child(4) { width: 6rem; }
+  thead th:nth-child(5) { width: 5.5rem; }
+  thead th:nth-child(6) { width: 4.5rem; }
   thead th:nth-child(7) { width: 4.5rem; }
   thead th:nth-child(8) { width: 8.5rem; }
   thead th:nth-child(9) { width: 2rem; }
@@ -521,7 +526,23 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
   }
   .tag--type { color: var(--color-text); font-weight: 700; }
   .tag--more { font-weight: 700; color: var(--color-text); }
-  .cell-lev, .cell-dep, .cell-comm { white-space: nowrap; font-weight: 600; color: var(--color-ink); }
+  .cell-lev, .cell-dep { white-space: nowrap; font-weight: 600; color: var(--color-ink); }
+  .bonus-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    color: var(--color-text-muted);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+  .bonus-pill.is-yes {
+    color: var(--color-positive);
+    background: var(--color-positive-bg);
+    border-color: var(--color-positive-border);
+  }
   .score {
     font-weight: 800;
     color: var(--color-ink);

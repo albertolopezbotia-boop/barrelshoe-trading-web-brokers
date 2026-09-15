@@ -14,14 +14,6 @@ const byRank = sortByRank(entries);
 const top3 = sortByRating(entries).slice(0, 3);
 const hasBrokers = entries.length > 0;
 
-const monogram = (name: string) =>
-  name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0] ?? '')
-    .join('')
-    .toUpperCase();
-
 const catCardLabel: Record<string, string> = {
   mt4: 'Los mejores brokers con MT4',
   mt5: 'Los mejores brokers con MT5',
@@ -30,18 +22,13 @@ const catCardLabel: Record<string, string> = {
   oro: 'Los mejores brokers para oro',
 };
 
-type HeroCard = { href: string; label: string; mono?: string };
+type HeroCard = { href: string; label: string };
 const heroCards: HeroCard[] = [
   ...CATEGORIES.map((c) => ({
     href: `/mejores-brokers/${c.slug}/`,
     label: catCardLabel[c.slug] ?? `Los mejores brokers · ${c.shortTitle}`,
   })),
   { href: '#comparativa', label: 'Comparativa de los 10 brokers' },
-  ...top3.slice(0, 2).map((e) => ({
-    href: `/brokers/${e.slug}/`,
-    label: `Reseña de ${e.data.name}`,
-    mono: monogram(e.data.name),
-  })),
 ];
 
 const ld = [
@@ -62,7 +49,7 @@ const ld = [
 >
   <section class="hero">
     <div class="container">
-      <h1>Encuentra tu bróker para España y Latinoamérica</h1>
+      <h1>Encuentra tu mejor broker</h1>
       <p class="hero__lead">Compara reseñas, rankings y costes de los principales brokers de forex y CFDs, en español.</p>
 
       <ul id="rankings" class="hero__cards" aria-label="Rankings y reseñas destacadas">
@@ -70,14 +57,10 @@ const ld = [
           <li>
             <a href={card.href}>
               <span class="hcard__icon" aria-hidden="true">
-                {card.mono ? (
-                  card.mono
-                ) : (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="8" r="6" />
-                    <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
-                  </svg>
-                )}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="6" />
+                  <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+                </svg>
               </span>
               <span class="hcard__label">{card.label}</span>
             </a>
@@ -203,7 +186,7 @@ const ld = [
   .methodology-teaser p + p { margin-top: var(--space-3); }
 
   @media (min-width: 560px) {
-    .hero__cards { grid-template-columns: repeat(4, 1fr); }
+    .hero__cards { grid-template-columns: repeat(3, 1fr); }
   }
   @media (min-width: 860px) {
     .hero__cards { gap: var(--space-4); }

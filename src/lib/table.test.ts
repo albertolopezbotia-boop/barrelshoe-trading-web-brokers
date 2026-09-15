@@ -20,6 +20,7 @@ const mk = (over: Partial<Row>): Row => ({
   regulators: ['CySEC'],
   regulatorTags: ['CySEC (Chipre)'],
   instruments: ['forex'],
+  bonus: false,
   ...over,
 });
 

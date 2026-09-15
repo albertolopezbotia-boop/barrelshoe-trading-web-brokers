@@ -23,7 +23,7 @@ const rows: Array<{ label: string; value: number }> = [
       <span class="dim-bars__track" aria-hidden="true">
         <span class="dim-bars__fill" style={`width:${(r.value / 5) * 100}%`}></span>
       </span>
-      <b class="dim-bars__value">{fmt.format(Math.round(r.value * 2 * 10) / 10)}</b>
+      <b class="dim-bars__value">{fmt.format(Math.round(r.value * 10) / 10)}</b>
     </li>
   ))}
 </ul>

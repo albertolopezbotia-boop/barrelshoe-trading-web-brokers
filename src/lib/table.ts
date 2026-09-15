@@ -32,6 +32,17 @@ export interface Row {
   regulators: string[];
   regulatorTags: string[];
   instruments: string[];
+  /** Provisional: no hay campo de bono en el esquema todavía; se asigna al azar (estable por slug). */
+  bonus: boolean;
+}
+
+/** Deterministic pseudo-random boolean derived from the slug, so it's stable within a build. */
+function randomBonusFlag(slug: string): boolean {
+  let hash = 0;
+  for (let i = 0; i < slug.length; i++) {
+    hash = (hash * 31 + slug.charCodeAt(i)) >>> 0;
+  }
+  return hash % 2 === 0;
 }
 
 export interface Filters {
@@ -64,6 +75,7 @@ export function toRow(entry: BrokerEntry): Row {
     regulators: d.regulators.map((r) => r.authority),
     regulatorTags: d.regulators.map((r) => `${r.authority} (${r.country})`),
     instruments: INSTRUMENT_KEYS.filter((k) => d.instruments[k]),
+    bonus: randomBonusFlag(entry.slug),
   };
 }
 
