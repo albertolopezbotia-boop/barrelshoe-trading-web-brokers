@@ -15,7 +15,7 @@ const areas: Array<{ key: keyof typeof WEIGHTS; label: string; measures: string 
     key: 'fees',
     label: 'Costes',
     measures:
-      'Spread típico en pares mayores, comisiones por operación, swaps nocturnos, comisiones de inactividad y cualquier coste de retirada o conversión de divisa.',
+      'Spread típico en pares mayores, comisiones por operación, swaps nocturnos, comisiones de inactividad y coste de conversión de divisa.',
   },
   {
     key: 'platforms',
@@ -140,8 +140,8 @@ const pct = (n: number) => `${Math.round(n * 100)} %`;
     </ul>
     <p>
       Las condiciones de los brokers cambian. Por eso cada review lleva una fecha de última
-      actualización y revisamos los datos de forma periódica. Si detectas un dato desfasado,
-      escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      actualización, que iremos renovando a medida que revisemos cada ficha. Si detectas un dato
+      desfasado, escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
     </p>
 
     <h2>Cómo ganamos dinero</h2>
