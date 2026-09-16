@@ -4,6 +4,7 @@ import { sortRows, filterRows, type Row } from './table';
 const mk = (over: Partial<Row>): Row => ({
   slug: 'x',
   name: 'X',
+  logo: '/logos/x.svg',
   href: '',
   affiliateUrl: '',
   rating: 4,

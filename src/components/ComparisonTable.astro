@@ -20,15 +20,6 @@ const ratingFmt = new Intl.NumberFormat('es-ES', {
 const score5 = (r: number) => ratingFmt.format(Math.round(r * 10) / 10);
 const stars = (r: number) => '★'.repeat(Math.round(r)) + '☆'.repeat(5 - Math.round(r));
 
-const monogram = (name: string) =>
-  name
-    .replace(/[^\p{L} ]/gu, '')
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0]!.toUpperCase())
-    .join('');
-
 const rows = sortRows(entries.map(toRow), 'rank', 'asc');
 
 const shortLeverage = (s: string) => {
@@ -134,7 +125,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
                 {showRank && <span class="rk">{r.rank}</span>}
                 {!showRank && <span class="rk">{i + 1}</span>}
                 <a href={r.href} class="bk">
-                  <span class="bk__mono" aria-hidden="true">{monogram(r.name)}</span>
+                  <img class="bk__mono" src={r.logo} alt="" width="32" height="32" loading="lazy" />
                   <span class="bk__text">
                     <span class="bk__name">{r.name}</span>
                     <span class="bk__rate">
@@ -222,6 +213,7 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
       brows.map((tr) => ({
         slug: tr.dataset.slug!,
         name: tr.dataset.name ?? '',
+        logo: '',
         href: '',
         affiliateUrl: '',
         rating: Number(tr.dataset.rating),
@@ -477,15 +469,14 @@ const regulatorOptions = [...new Set(rows.flatMap((r) => r.regulators))].sort((a
   .bk:hover .bk__name { text-decoration: underline; }
   .bk__mono {
     flex: 0 0 auto;
-    display: grid;
-    place-items: center;
     width: 2rem;
     height: 2rem;
+    object-fit: contain;
     border-radius: var(--radius-sm);
-    background: var(--color-ink);
-    color: var(--color-text-inverse);
-    font-weight: 800;
-    font-size: 10px;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    padding: 3px;
+    box-sizing: border-box;
   }
   .bk__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
   .bk__name {

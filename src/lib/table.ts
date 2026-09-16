@@ -16,6 +16,7 @@ export const INSTRUMENT_KEYS: Array<keyof BrokerData['instruments']> = [
 export interface Row {
   slug: string;
   name: string;
+  logo: string;
   href: string;
   affiliateUrl: string;
   rating: number;
@@ -59,6 +60,7 @@ export function toRow(entry: BrokerEntry): Row {
   return {
     slug: entry.slug,
     name: d.name,
+    logo: d.logo,
     href: `/brokers/${entry.slug}/`,
     affiliateUrl: d.affiliateUrl,
     rating: d.rating,

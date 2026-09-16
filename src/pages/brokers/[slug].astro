@@ -45,13 +45,6 @@ if (import.meta.env.DEV && Math.abs(aggregateRating(d.ratingBreakdown) - d.ratin
 }
 
 const dateFmt = new Intl.DateTimeFormat('es-ES', { dateStyle: 'long' });
-const monogram = d.name
-  .replace(/[^\p{L} ]/gu, '')
-  .split(/\s+/)
-  .filter(Boolean)
-  .slice(0, 2)
-  .map((w) => w[0]!.toUpperCase())
-  .join('');
 
 const costSpecs: Array<{ label: string; value: string }> = [
   { label: 'Depósito mínimo', value: money(d.minDeposit) },
@@ -111,7 +104,7 @@ const ld = [
   <div class="container broker-review">
     <section id="resumen" class="hero">
       <div class="hero__id">
-        <span class="hero__logo" aria-hidden="true">{monogram}</span>
+        <img class="hero__logo" src={d.logo} alt="" width="56" height="56" />
         <div>
           <h1>{d.name}: análisis y opiniones</h1>
           <p class="hero__meta">
@@ -219,15 +212,14 @@ const ld = [
   .hero__id { display: flex; align-items: center; gap: var(--space-4); }
   .hero__logo {
     flex: 0 0 auto;
-    display: grid;
-    place-items: center;
     width: 3.5rem;
     height: 3.5rem;
+    object-fit: contain;
     border-radius: 12px;
-    background: var(--color-ink);
-    color: var(--color-text-inverse);
-    font-weight: 800;
-    font-size: var(--font-size-lg);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    padding: 6px;
+    box-sizing: border-box;
   }
   .hero__id h1 { margin: 0; font-size: var(--font-size-2xl); }
   .hero__meta {
