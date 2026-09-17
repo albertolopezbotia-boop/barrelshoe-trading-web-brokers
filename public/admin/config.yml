@@ -1,0 +1,40 @@
+backend:
+  name: github
+  repo: albertolopezbotia-boop/barrelshoe-trading-web-brokers
+  branch: main
+  base_url: "REEMPLAZAR_EN_TAREA_5"
+  auth_endpoint: auth
+
+publish_mode: editorial_workflow
+
+media_folder: "public/logos"
+public_folder: "/logos"
+
+collections:
+  - name: "pages"
+    label: "Textos de página"
+    files:
+      - name: "home"
+        label: "Home"
+        file: "src/content/homePage/index.yaml"
+        fields:
+          - { label: "Titular del hero", name: "heroTitle", widget: "string" }
+          - { label: "Subtítulo del hero", name: "heroLead", widget: "text" }
+          - { label: "Tarjeta: MT4", name: "cardMt4", widget: "string" }
+          - { label: "Tarjeta: MT5", name: "cardMt5", widget: "string" }
+          - { label: "Tarjeta: cTrader", name: "cardCtrader", widget: "string" }
+          - { label: "Tarjeta: Copy trading", name: "cardCopyTrading", widget: "string" }
+          - { label: "Tarjeta: Oro", name: "cardOro", widget: "string" }
+          - { label: "Tarjeta: Comparativa", name: "cardComparativa", widget: "string" }
+      - name: "metodologia"
+        label: "Metodología"
+        file: "src/content/methodologyPage/index.yaml"
+        fields:
+          - { label: "Intro (lead)", name: "leadIntro", widget: "text" }
+          - { label: "Cómo puntuamos — intro", name: "scoringIntro", widget: "text" }
+          - { label: "Cómo puntuamos — cierre", name: "scoringOutro", widget: "text" }
+          - { label: "Por qué estos brokers — intro", name: "inclusionIntro", widget: "text" }
+          - { label: "Fuentes de datos — intro", name: "sourcesIntro", widget: "text" }
+          - { label: "Fuentes de datos — cierre", name: "sourcesOutro", widget: "text" }
+          - { label: "Cómo ganamos dinero — intro", name: "monetizationIntro", widget: "text" }
+          - { label: "Independencia editorial", name: "editorialIndependence", widget: "text" }
