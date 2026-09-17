@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import ComparisonTable from '../components/ComparisonTable.astro';
 import CategoryRanking from '../components/CategoryRanking.astro';
@@ -14,12 +14,13 @@ const byRank = sortByRank(entries);
 const top3 = sortByRating(entries).slice(0, 3);
 const hasBrokers = entries.length > 0;
 
+const home = (await getEntry('homePage', 'index'))!.data;
 const catCardLabel: Record<string, string> = {
-  mt4: 'Principiantes',
-  mt5: 'Crypto',
-  ctrader: 'Cuenta de fondeo',
-  'copy-trading': 'Copytrading',
-  oro: 'Forex',
+  mt4: home.cardMt4,
+  mt5: home.cardMt5,
+  ctrader: home.cardCtrader,
+  'copy-trading': home.cardCopyTrading,
+  oro: home.cardOro,
 };
 
 type HeroCard = { href: string; label: string };
@@ -28,7 +29,7 @@ const heroCards: HeroCard[] = [
     href: `/mejores-brokers/${c.slug}/`,
     label: catCardLabel[c.slug] ?? `Los mejores brokers · ${c.shortTitle}`,
   })),
-  { href: '#comparativa', label: 'Xauusd' },
+  { href: '#comparativa', label: home.cardComparativa },
 ];
 
 const ld = [
@@ -49,8 +50,8 @@ const ld = [
 >
   <section class="hero">
     <div class="container">
-      <h1>Encuentra tu mejor broker</h1>
-      <p class="hero__lead">Compara reseñas, rankings y costes de los principales brokers de forex y CFDs, en español.</p>
+      <h1>{home.heroTitle}</h1>
+      <p class="hero__lead">{home.heroLead}</p>
 
       <ul id="rankings" class="hero__cards" aria-label="Rankings y reseñas destacadas">
         {heroCards.map((card) => (
