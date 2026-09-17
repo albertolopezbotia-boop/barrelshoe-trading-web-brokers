@@ -2,7 +2,7 @@ backend:
   name: github
   repo: albertolopezbotia-boop/barrelshoe-trading-web-brokers
   branch: main
-  base_url: "REEMPLAZAR_EN_TAREA_5"
+  base_url: "https://barrelshoe-decap-oauth.barrelshoetrading.workers.dev"
   auth_endpoint: auth
 
 publish_mode: editorial_workflow
