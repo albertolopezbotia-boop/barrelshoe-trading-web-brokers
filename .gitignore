@@ -21,3 +21,6 @@ test-output.txt
 
 # local editor / assistant config
 .claude/
+
+# git worktrees used for isolated feature work
+.worktrees/
