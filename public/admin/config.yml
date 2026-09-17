@@ -1,0 +1,161 @@
+backend:
+  name: github
+  repo: albertolopezbotia-boop/barrelshoe-trading-web-brokers
+  branch: main
+  base_url: "https://barrelshoe-decap-oauth.barrelshoetrading.workers.dev"
+  auth_endpoint: auth
+
+publish_mode: editorial_workflow
+
+media_folder: "public/logos"
+public_folder: "/logos"
+
+collections:
+  - name: "pages"
+    label: "Textos de página"
+    files:
+      - name: "home"
+        label: "Home"
+        file: "src/content/homePage/index.yaml"
+        fields:
+          - { label: "Titular del hero", name: "heroTitle", widget: "string" }
+          - { label: "Subtítulo del hero", name: "heroLead", widget: "text" }
+          - { label: "Tarjeta: MT4", name: "cardMt4", widget: "string" }
+          - { label: "Tarjeta: MT5", name: "cardMt5", widget: "string" }
+          - { label: "Tarjeta: cTrader", name: "cardCtrader", widget: "string" }
+          - { label: "Tarjeta: Copy trading", name: "cardCopyTrading", widget: "string" }
+          - { label: "Tarjeta: Oro", name: "cardOro", widget: "string" }
+          - { label: "Tarjeta: Comparativa", name: "cardComparativa", widget: "string" }
+      - name: "metodologia"
+        label: "Metodología"
+        file: "src/content/methodologyPage/index.yaml"
+        fields:
+          - { label: "Intro (lead)", name: "leadIntro", widget: "text" }
+          - { label: "Cómo puntuamos — intro", name: "scoringIntro", widget: "text" }
+          - { label: "Cómo puntuamos — cierre", name: "scoringOutro", widget: "text" }
+          - { label: "Por qué estos brokers — intro", name: "inclusionIntro", widget: "text" }
+          - { label: "Fuentes de datos — intro", name: "sourcesIntro", widget: "text" }
+          - { label: "Fuentes de datos — cierre", name: "sourcesOutro", widget: "text" }
+          - { label: "Cómo ganamos dinero — intro", name: "monetizationIntro", widget: "text" }
+          - { label: "Independencia editorial", name: "editorialIndependence", widget: "text" }
+  - name: "brokers"
+    label: "Brokers"
+    folder: "src/content/brokers"
+    create: true
+    slug: "{{slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    identifier_field: "name"
+    summary: "{{name}} — puesto {{rank}}, nota {{rating}}"
+    fields:
+      - { label: "Nombre", name: "name", widget: "string" }
+      - { label: "Logo", name: "logo", widget: "image" }
+      - { label: "Web oficial", name: "websiteUrl", widget: "string", pattern: ["^https?://", "Debe empezar por http:// o https://"] }
+      - { label: "Fundado (año)", name: "founded", widget: "number", value_type: "int", min: 1970, max: 2030 }
+      - { label: "Sede", name: "headquarters", widget: "string" }
+      - { label: "URL de afiliado", name: "affiliateUrl", widget: "string", pattern: ["^https?://", "Debe empezar por http:// o https://"] }
+      - { label: "Destacado", name: "featured", widget: "boolean", default: false }
+      - { label: "Puesto en el ranking", name: "rank", widget: "number", value_type: "int", min: 1 }
+      - { label: "Nota global (0-5)", name: "rating", widget: "number", value_type: "float", min: 0, max: 5, step: 0.1 }
+      - label: "Desglose de la nota"
+        name: "ratingBreakdown"
+        widget: "object"
+        fields:
+          - { label: "Costes", name: "fees", widget: "number", value_type: "float", min: 0, max: 5, step: 0.1 }
+          - { label: "Plataformas", name: "platforms", widget: "number", value_type: "float", min: 0, max: 5, step: 0.1 }
+          - { label: "Depósitos y retiros", name: "deposits", widget: "number", value_type: "float", min: 0, max: 5, step: 0.1 }
+          - { label: "Atención al cliente", name: "support", widget: "number", value_type: "float", min: 0, max: 5, step: 0.1 }
+          - { label: "Regulación", name: "regulation", widget: "number", value_type: "float", min: 0, max: 5, step: 0.1 }
+      - label: "Reguladores"
+        name: "regulators"
+        widget: "list"
+        allow_add: true
+        summary: "{{authority}} ({{country}})"
+        fields:
+          - { label: "Autoridad", name: "authority", widget: "string" }
+          - { label: "País", name: "country", widget: "string" }
+          - { label: "Nº de licencia", name: "licenseNumber", widget: "string" }
+          - { label: "Estado", name: "status", widget: "select", options: ["activa", "limitada", "retirada"] }
+      - label: "Depósito mínimo"
+        name: "minDeposit"
+        widget: "object"
+        fields:
+          - { label: "Importe", name: "amount", widget: "number", value_type: "float", min: 0 }
+          - { label: "Divisa", name: "currency", widget: "string", default: "USD" }
+      - { label: "Spread EUR/USD desde", name: "spreadEurUsdFrom", widget: "number", value_type: "float", min: 0 }
+      - label: "Comisión por lote"
+        name: "commissionPerLot"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Importe", name: "amount", widget: "number", value_type: "float", min: 0 }
+          - { label: "Divisa", name: "currency", widget: "string", default: "USD" }
+      - { label: "Cuenta sin swap disponible", name: "swapFree", widget: "boolean", default: false }
+      - label: "Tipos de cuenta"
+        name: "accountTypes"
+        widget: "list"
+        allow_add: true
+        summary: "{{name}}"
+        fields:
+          - { label: "Nombre", name: "name", widget: "string" }
+          - { label: "Spread desde", name: "spreadFrom", widget: "number", value_type: "float", min: 0 }
+          - { label: "Comisión (texto)", name: "commission", widget: "string" }
+          - label: "Depósito mínimo de esta cuenta"
+            name: "minDeposit"
+            widget: "object"
+            fields:
+              - { label: "Importe", name: "amount", widget: "number", value_type: "float", min: 0 }
+              - { label: "Divisa", name: "currency", widget: "string", default: "USD" }
+      - { label: "Plataformas", name: "platforms", widget: "select", multiple: true, options: ["MT4", "MT5", "cTrader", "WebTrader", "propia", "movil"] }
+      - { label: "Tipo de ejecución", name: "brokerType", widget: "select", multiple: true, options: ["Creador de mercado", "STP", "ECN", "NDD", "DMA"] }
+      - label: "Instrumentos"
+        name: "instruments"
+        widget: "object"
+        fields:
+          - { label: "Forex", name: "forex", widget: "boolean", default: false }
+          - { label: "Índices", name: "indices", widget: "boolean", default: false }
+          - { label: "Materias primas", name: "commodities", widget: "boolean", default: false }
+          - { label: "Oro", name: "gold", widget: "boolean", default: false }
+          - { label: "Acciones", name: "stocks", widget: "boolean", default: false }
+          - { label: "Cripto", name: "crypto", widget: "boolean", default: false }
+          - { label: "ETFs", name: "etfs", widget: "boolean", default: false }
+      - { label: "Apalancamiento máximo (texto)", name: "leverageMax", widget: "string" }
+      - { label: "Copy trading", name: "copyTrading", widget: "boolean", default: false }
+      - { label: "Expert Advisors permitidos", name: "easAllowed", widget: "boolean", default: false }
+      - { label: "Scalping permitido", name: "scalpingAllowed", widget: "boolean", default: false }
+      - { label: "Cuenta demo", name: "demoAccount", widget: "boolean", default: false }
+      - { label: "Cuenta islámica", name: "islamicAccount", widget: "boolean", default: false }
+      - { label: "Métodos de pago", name: "paymentMethods", widget: "list" }
+      - { label: "Tiempo de retirada típico", name: "withdrawalTimeTypical", widget: "text" }
+      - { label: "Comisiones de retirada", name: "withdrawalFees", widget: "text" }
+      - label: "Retiro mínimo"
+        name: "withdrawalMinimum"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Importe", name: "amount", widget: "number", value_type: "float", min: 0 }
+          - { label: "Divisa", name: "currency", widget: "string", default: "USD" }
+      - { label: "Propiedad / grupo", name: "ownership", widget: "text" }
+      - { label: "Cotiza en bolsa", name: "listedCompany", widget: "boolean", default: false }
+      - { label: "Oficinas globales", name: "globalOffices", widget: "list" }
+      - { label: "Entidades del grupo", name: "groupEntities", widget: "list" }
+      - label: "Soporte"
+        name: "support"
+        widget: "object"
+        fields:
+          - { label: "Idiomas", name: "languages", widget: "list" }
+          - { label: "Horario", name: "hours", widget: "string" }
+          - { label: "Canales", name: "channels", widget: "list" }
+      - { label: "Pros", name: "pros", widget: "list" }
+      - { label: "Contras", name: "cons", widget: "list" }
+      - { label: "Resumen (bottomLine)", name: "bottomLine", widget: "text", pattern: ["^.{40,400}$", "Entre 40 y 400 caracteres"] }
+      - { label: "Última actualización", name: "lastUpdated", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - label: "Preguntas frecuentes"
+        name: "faq"
+        widget: "list"
+        allow_add: true
+        summary: "{{question}}"
+        fields:
+          - { label: "Pregunta", name: "question", widget: "string" }
+          - { label: "Respuesta", name: "answer", widget: "text" }
+      - { label: "Análisis (cuerpo del artículo)", name: "body", widget: "markdown" }
