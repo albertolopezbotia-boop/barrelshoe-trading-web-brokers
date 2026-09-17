@@ -58,7 +58,8 @@ collections:
       - { label: "Sede", name: "headquarters", widget: "string" }
       - { label: "URL de afiliado", name: "affiliateUrl", widget: "string", pattern: ["^https?://", "Debe empezar por http:// o https://"] }
       - { label: "Destacado", name: "featured", widget: "boolean", default: false }
-      - { label: "Puesto en el ranking", name: "rank", widget: "number", value_type: "int", min: 1 }
+      - { label: "Visible en la web", name: "visible", widget: "boolean", default: true, hint: "Si lo apagas, el bróker desaparece de toda la web (tabla, rankings y su propia ficha) sin borrar sus datos." }
+      - { label: "Orden (1 = primero)", name: "rank", widget: "number", value_type: "int", min: 1, hint: "Fija el orden inicial en la tabla; luego cualquier visitante puede reordenarla a su gusto pulsando las cabeceras de columna." }
       - { label: "Nota global (0-5)", name: "rating", widget: "number", value_type: "float", min: 0, max: 5, step: 0.1 }
       - label: "Desglose de la nota"
         name: "ratingBreakdown"

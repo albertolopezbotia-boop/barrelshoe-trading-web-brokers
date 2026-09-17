@@ -22,7 +22,7 @@ import { reviewLd, faqPageLd, breadcrumbListLd, organizationLd } from '../../lib
 import { aggregateRating } from '../../lib/rating';
 
 export async function getStaticPaths() {
-  const brokers = await getCollection('brokers');
+  const brokers = await getCollection('brokers', ({ data }) => data.visible !== false);
   const entries: BrokerEntry[] = brokers.map((e) => ({ slug: e.slug, data: e.data }));
   return brokers.map((entry) => ({
     params: { slug: entry.slug },

@@ -8,7 +8,7 @@ import { CATEGORIES } from '../data/categories';
 import { sortByRank, sortByRating, type BrokerEntry } from '../lib/brokers';
 import { organizationLd, websiteLd, itemListLd } from '../lib/jsonld';
 
-const raw = await getCollection('brokers');
+const raw = await getCollection('brokers', ({ data }) => data.visible !== false);
 const entries: BrokerEntry[] = raw.map((e) => ({ slug: e.slug, data: e.data }));
 const byRank = sortByRank(entries);
 const top3 = sortByRating(entries).slice(0, 3);

@@ -21,6 +21,9 @@ export const brokerSchema = z.object({
   headquarters: z.string().min(1),
   affiliateUrl: z.string().url(),
   featured: z.boolean().default(false),
+  /** Si es false, el bróker desaparece de toda la web (listados y su propia
+   *  ficha) sin borrar sus datos. */
+  visible: z.boolean().default(true),
   rank: z.number().int().min(1),
   rating: oneDecimalRating,
   ratingBreakdown: z.object({
