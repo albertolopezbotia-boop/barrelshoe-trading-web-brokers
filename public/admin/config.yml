@@ -5,7 +5,10 @@ backend:
   base_url: "https://barrelshoe-decap-oauth.barrelshoetrading.workers.dev"
   auth_endpoint: auth
 
-publish_mode: editorial_workflow
+# publish_mode: editorial_workflow  # desactivado temporalmente para pruebas —
+# cada guardado publica al instante en `main` en vez de abrir un PR pendiente
+# de revisar. Reactivar (descomentar la línea de arriba y borrar esta nota)
+# antes de dar acceso a colaboradores que no sean de confianza total.
 
 media_folder: "public/logos"
 public_folder: "/logos"
