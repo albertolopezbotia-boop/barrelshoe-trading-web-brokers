@@ -18,4 +18,18 @@ const homePage = defineCollection({
   }),
 });
 
-export const collections = { brokers, homePage };
+const methodologyPage = defineCollection({
+  type: 'data',
+  schema: z.object({
+    leadIntro: z.string().min(1),
+    scoringIntro: z.string().min(1),
+    scoringOutro: z.string().min(1),
+    inclusionIntro: z.string().min(1),
+    sourcesIntro: z.string().min(1),
+    sourcesOutro: z.string().min(1),
+    monetizationIntro: z.string().min(1),
+    editorialIndependence: z.string().min(1),
+  }),
+});
+
+export const collections = { brokers, homePage, methodologyPage };
